@@ -18,6 +18,13 @@ LocaleConfig.defaultLocale = 'vn';
 import CommonStyle from './CommonStyle';
 import Colors from './Colors';
 import Modal from './Modal';
+import ButtonListSelect from './ButtonListSelect';
+
+const listShifts = [
+  { key: 'morning', text: 'Sáng' },
+  { key: 'afternoon', text: 'Chiều' },
+  { key: 'evening', text: 'Tối' },
+];
 
 const propTypes = {
   placeholder: PropTypes.string,
@@ -40,10 +47,11 @@ const defaultProps = {
   markingStyle: { color: Colors.logo_snappy, textColor: '#fff' },
 };
 
-type IProps = InferProps<typeof propTypes> & { dateFormat: any };
+type IProps = InferProps<typeof propTypes> & { dateFormat?: any };
 type IState = {
-  visible: boolean | undefined | null;
-  dateValue: any;
+  visible?: boolean | undefined | null;
+  dateValue?: any;
+  shift: string;
 };
 export default class DatePicker extends Component<IProps, IState> {
   static propTypes = {};
@@ -51,7 +59,11 @@ export default class DatePicker extends Component<IProps, IState> {
   mounted: boolean | undefined;
   constructor(props: IProps) {
     super(props);
-    this.state = { visible: props.visible, dateValue: (props.dateValue && dayjs(props.dateValue).format('YYYY-MM-DD')) || undefined };
+    this.state = {
+      visible: props.visible,
+      dateValue: (props.dateValue && dayjs(props.dateValue).format('YYYY-MM-DD')) || undefined,
+      shift: '',
+    };
   }
 
   componentDidMount() {
@@ -68,7 +80,8 @@ export default class DatePicker extends Component<IProps, IState> {
     this.mounted && this.setState({ dateValue: date?.dateString });
   };
 
-  onShowModalDatePicker = () => this.mounted && this.setState({ visible: true, dateValue: this.state.dateValue || dayjs().format('YYYY-MM-DD') });
+  onShowModalDatePicker = () =>
+    this.mounted && this.setState({ visible: true, dateValue: this.state.dateValue || dayjs().format('YYYY-MM-DD'), shift: 'morning' });
   onHiddenModalDatePicker = () => this.mounted && this.setState({ visible: false });
   onCancel = () => {
     const { dateValue } = this.props;
@@ -77,7 +90,9 @@ export default class DatePicker extends Component<IProps, IState> {
 
   render() {
     const { placeholder, onSubmit, dateFormat, markingStyle, onChange, title, styleTitle, styleLabelTitle } = this.props;
-    const { visible, dateValue } = this.state;
+    const { visible, dateValue, shift } = this.state;
+
+    const shiftDate = listShifts.find(item => item.key === shift);
 
     return (
       <View>
@@ -90,7 +105,7 @@ export default class DatePicker extends Component<IProps, IState> {
           <View style={[CommonStyle.d_flex_start, CommonStyle.border_input]}>
             <AntDesign name="calendar" size={16} color="black" />
             <Text style={{ marginLeft: 8, lineHeight: 24 }}>
-              {(dateValue && dayjs(dateValue).format(dateFormat)) || placeholder || 'Chọn ngày, tháng, năm'}
+              {shift && shiftDate?.text} {(dateValue && dayjs(dateValue).format(dateFormat)) || placeholder || 'Chọn ngày, tháng, năm'}
             </Text>
           </View>
         </TouchableOpacity>
@@ -100,7 +115,7 @@ export default class DatePicker extends Component<IProps, IState> {
           hiddenTitle
           onCancel={(onChange && this.onHiddenModalDatePicker) || this.onCancel}
           onOk={() => {
-            onSubmit && onSubmit(dateValue);
+            onSubmit && onSubmit(dateValue, shiftDate);
             this.onHiddenModalDatePicker();
           }}>
           <View style={{ padding: 16 }}>
@@ -150,6 +165,7 @@ export default class DatePicker extends Component<IProps, IState> {
                 },
               }}
             />
+            <ButtonListSelect cols={3} value={shift} options={listShifts} onChange={(event)=>this.setState({shift: event.key})} />
           </View>
         </Modal>
       </View>

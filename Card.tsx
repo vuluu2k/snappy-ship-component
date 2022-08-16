@@ -74,23 +74,16 @@ function Card(props: IProps) {
   onCall && buttonOptions.push({ key: 'phone_call', text: 'Gọi', onPress: onCall });
 
   return (
-    <View
-      style={[
-        styles.container,
-        style,
-        isSelect && { backgroundColor: Colors.yellow_snappy },
-        latestViewId === code && { backgroundColor: Colors.geek_blue_1 },
-      ]}>
+    <View style={[styles.container, style, latestViewId === code && { backgroundColor: Colors.geek_blue_1 }]}>
       <View style={styles.index}>
         <Text style={{ color: 'white' }}>{index}</Text>
       </View>
       <View style={styles.p_hr_16}>
         <View style={styles.header}>
           <View style={{ flexDirection: 'row', paddingLeft: 32, alignItems: 'center' }}>
-            {onSelect && <CheckBox checked={isSelect} onChange={onSelect} />}
             <CodeCopy text={code} />
           </View>
-          <View style={{ flexDirection: 'row' }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             {(hasNew && (
               <View style={styles.hasNew}>
                 <Text>Mới</Text>
@@ -102,19 +95,14 @@ function Card(props: IProps) {
                 Chi tiết <AntDesign name="right" />
               </Text>
             </TouchableOpacity>
+            {onSelect && <CheckBox checked={isSelect} onChange={onSelect} />}
           </View>
         </View>
         <Divider style={{ marginBottom: 0 }} />
       </View>
 
       <SwipeAble {...swipeAble} disabled={!swipeAble}>
-        <View
-          style={[
-            styles.p_hr_16,
-            { paddingTop: 12 },
-            isSelect && { backgroundColor: Colors.yellow_snappy },
-            latestViewId === code && { backgroundColor: Colors.geek_blue_1 },
-          ]}>
+        <View style={[styles.p_hr_16, { paddingTop: 12 }, latestViewId === code && { backgroundColor: Colors.geek_blue_1 }]}>
           {((address || fullName || phoneNumber) && (
             <View style={styles.content}>
               <View>

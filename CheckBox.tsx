@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import { StyleSheet, Text, TouchableHighlight, View } from 'react-native';
+import React from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import PropTypes, { InferProps } from 'prop-types';
 import { MaterialIcons } from '@expo/vector-icons';
 
@@ -33,7 +33,7 @@ const CheckBox = (props: IProps) => {
   const { style, labelCenter, center, label, onChange, labelColor, fontSize, fontFamily, end, checked, labelReactNode } = props;
   const styleLabel: any = { color: labelColor, fontSize: fontSize, fontFamily: fontFamily };
   return (
-    <TouchableHighlight onPress={onChange || undefined} style={style} underlayColor="transparent">
+    <TouchableOpacity onPress={onChange || undefined} style={style}>
       <View
         style={{
           flexDirection: 'row',
@@ -62,7 +62,7 @@ const CheckBox = (props: IProps) => {
         </View>
         {end && <View>{end}</View>}
       </View>
-    </TouchableHighlight>
+    </TouchableOpacity>
   );
 };
 
