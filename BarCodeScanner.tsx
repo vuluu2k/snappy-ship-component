@@ -1,9 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Text, View, StyleSheet, Dimensions, StatusBar, TouchableOpacity, Animated } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { Feather, Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import Constants from 'expo-constants';
+import Modal from 'react-native-modal';
+
 import IconSnappy from '@components/IconSnappy';
+import Colors from './Colors';
 
 const deviceHeight = Dimensions.get('window').height;
 const deviceWidth = Dimensions.get('window').width;
@@ -11,14 +14,17 @@ const deviceWidth = Dimensions.get('window').width;
 type IProps = {
   onScan: (event: any) => void;
   onClose: () => void;
-  children: any;
+  onOkWarn: () => void;
+  children?: any;
+  textWarn: string;
+  isWarn?: boolean;
+  isScan: boolean;
 };
 
 export default function SnyBarCodeScanner(props: IProps) {
-  const { onScan, onClose, children } = props;
+  const { onScan, onClose, children, textWarn, isWarn, onOkWarn, isScan } = props;
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
   const [screen, setScreen] = useState<string>('scan');
-  const [scanned, setScanned] = useState<boolean>(false);
   const [sizeQrCode, setSizeQrCode] = useState<any>({ width: 0, height: 0 });
   const lineAnim = useRef(new Animated.Value(0)).current;
 
@@ -51,73 +57,96 @@ export default function SnyBarCodeScanner(props: IProps) {
 
   const transformLine = lineAnim.interpolate({
     inputRange: [0, 1],
-    outputRange: [0, sizeQrCode?.height],
+    outputRange: [1, sizeQrCode?.height - 2],
   });
 
   const handleBarCodeScanned = ({ type, data }: { type: any; data: any }) => {
     onScan && onScan(data);
-    setScanned(true);
-    alert(`Bar code with type ${type} and data ${data} has been scanned!`);
   };
 
   if (hasPermission === null) {
-    return <Text>Requesting for camera permission</Text>;
+    return (
+      <View style={styles.container_permission}>
+        <Feather name="camera" size={30} color="black" />
+        <Text style={styles.text_permission}>Ứng dụng yêu cầu quyền truy cập Camera</Text>
+      </View>
+    );
   }
   if (hasPermission === false) {
-    return <Text>No access to camera</Text>;
+    return (
+      <View style={styles.container_permission}>
+        <Feather name="camera-off" size={30} color="black" />
+        <Text style={styles.text_permission}>Ứng dụng chưa được cho phép truy cập Camera</Text>
+      </View>
+    );
   }
 
   return (
-    <View style={styles.main}>
-      <StatusBar translucent={true} backgroundColor="transparent" barStyle="light-content" />
+    <>
+      <View style={styles.main}>
+        <StatusBar translucent={true} backgroundColor="transparent" barStyle="light-content" />
 
-      {(screen === 'scan' && (
-        <BarCodeScanner onBarCodeScanned={scanned ? undefined : handleBarCodeScanned} style={[styles.container]}>
-          <View style={styles.layerTop}></View>
-          <View style={styles.layerCenter}>
-            <View style={styles.layerLeft} />
-            <View style={styles.focused} onLayout={onLineLayout}>
-              <EdgeQRCode position="topRight" />
-              <EdgeQRCode position="topLeft" />
-              <Animated.View
-                style={[
-                  {
-                    transform: [{ translateY: transformLine }],
-                  },
-                  styles.lineAnim,
-                ]}
-              />
-              <EdgeQRCode position="bottomRight" />
-              <EdgeQRCode position="bottomLeft" />
+        {(screen === 'scan' && (
+          <BarCodeScanner onBarCodeScanned={isScan || isWarn ? undefined : handleBarCodeScanned || undefined} style={[styles.container]}>
+            <View style={styles.layerTop}></View>
+            <View style={styles.layerCenter}>
+              <View style={styles.layerLeft} />
+              <View style={styles.focused} onLayout={onLineLayout}>
+                <EdgeQRCode position="topRight" />
+                <EdgeQRCode position="topLeft" />
+                <Animated.View
+                  style={[
+                    {
+                      transform: [{ translateY: transformLine }],
+                    },
+                    styles.lineAnim,
+                  ]}
+                />
+                <EdgeQRCode position="bottomRight" />
+                <EdgeQRCode position="bottomLeft" />
+              </View>
+              <View style={styles.layerRight} />
             </View>
-            <View style={styles.layerRight} />
-          </View>
-          <View style={styles.layerBottom} />
-        </BarCodeScanner>
-      )) ||
-        (screen === 'data' && <View style={{ backgroundColor: 'white' }}>{children}</View>)}
+            <View style={styles.layerBottom} />
+          </BarCodeScanner>
+        )) ||
+          (screen === 'data' && <View style={{ backgroundColor: 'white' }}>{children}</View>)}
 
-      {/* Actions */}
-      <TouchableOpacity onPress={onClose} style={styles.close}>
-        <View style={{ backgroundColor: 'rgba(0,0,0,.6)', width: 22, height: 22, alignItems: 'center', justifyContent: 'center', borderRadius: 13 }}>
-          <Ionicons name="ios-close" size={20} color="#fff" />
+        {/* Actions */}
+        <TouchableOpacity onPress={onClose} style={styles.close}>
+          <View
+            style={{ backgroundColor: 'rgba(0,0,0,.6)', width: 22, height: 22, alignItems: 'center', justifyContent: 'center', borderRadius: 13 }}>
+            <Ionicons name="ios-close" size={20} color="#fff" />
+          </View>
+        </TouchableOpacity>
+        <View style={styles.bottomAction}>
+          <TouchableOpacity onPress={() => setScreen('scan')}>
+            <View style={styles.bottomButtonAction}>
+              <IconSnappy name="scan-barcode" color="#fff" size={20} />
+              <Text style={styles.bottomTextAction}>Quét mã</Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => setScreen('data')}>
+            <View style={styles.bottomButtonAction}>
+              <IconSnappy name="package-outline" color="#fff" size={20} />
+              <Text style={styles.bottomTextAction}>Dữ liệu</Text>
+            </View>
+          </TouchableOpacity>
         </View>
-      </TouchableOpacity>
-      <View style={styles.bottomAction}>
-        <TouchableOpacity onPress={() => setScreen('scan')}>
-          <View style={styles.bottomButtonAction}>
-            <IconSnappy name="scan-barcode" color="#fff" size={20} />
-            <Text style={styles.bottomTextAction}>Quét mã</Text>
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => setScreen('data')}>
-          <View style={styles.bottomButtonAction}>
-            <IconSnappy name="package-outline" color="#fff" size={20} />
-            <Text style={styles.bottomTextAction}>Dữ liệu</Text>
-          </View>
-        </TouchableOpacity>
       </View>
-    </View>
+
+      <Modal isVisible={isWarn}>
+        <View style={styles.content_modal}>
+          <MaterialIcons name="error-outline" size={40} color="red" />
+          <Text style={styles.text_modal}>{textWarn || 'Cảnh báo Snappy'}</Text>
+          <TouchableOpacity onPress={onOkWarn}>
+            <View style={styles.btn_ok}>
+              <Text style={{ color: 'white', fontFamily: 'Roboto_500Medium' }}>Đã hiểu</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+      </Modal>
+    </>
   );
 }
 
@@ -168,6 +197,9 @@ const EdgeQRCode = ({ position }: { position: string }) => {
 
 const opacity = 'rgba(0, 0, 0, .6)';
 const styles: any = StyleSheet.create({
+  container_permission: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  text_permission: { fontFamily: 'Roboto_500Medium', marginTop: 8 },
+
   // action
   close: { position: 'absolute', top: Constants.statusBarHeight + 20, left: 20, width: 40, height: 40 },
   bottomAction: {
@@ -247,4 +279,32 @@ const styles: any = StyleSheet.create({
     right: 0,
   },
   lineAnim: { height: 2, backgroundColor: '#fff' },
+
+  // modal
+
+  content_modal: {
+    marginHorizontal: 30,
+    padding: 20,
+    borderRadius: 16,
+    backgroundColor: 'white',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  text_modal: {
+    color: Colors.gray_5,
+    fontSize: 14,
+    fontFamily: 'Roboto_500Medium',
+    marginVertical: 12,
+  },
+  btn_ok: {
+    padding: 8,
+    marginTop: 10,
+    backgroundColor: 'red',
+    minWidth: 120,
+    borderRadius: 20,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });
