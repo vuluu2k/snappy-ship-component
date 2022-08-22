@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
 import Colors from './Colors';
 
-const CommonStyle: any = StyleSheet.create({
+export default StyleSheet.create({
   // lib
   d_flex_between: {
     flexDirection: 'row',
@@ -82,5 +82,3 @@ const CommonStyle: any = StyleSheet.create({
     flex: 1,
   },
 });
-
-export default CommonStyle;

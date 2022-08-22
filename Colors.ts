@@ -7,6 +7,7 @@ export default {
   daybreak_blue_1: '#E6F7FF',
 
   geek_blue_7: '#1D39C4',
+  geek_blue_6: '#2F54EB',
   geek_blue_5: '#597EF7',
   geek_blue_3: '#ADC6FF',
   geek_blue_1: '#F0F5FF',
@@ -43,6 +44,7 @@ export default {
   sunset_orange_4: '#FFC069',
   sunset_orange_1: '#FFF7E6',
 
+  golden_purple_7: '#531DAB',
   golden_purple_6: '#722ED1',
 
   polar_green_8: '#237804',
@@ -71,7 +73,7 @@ export default {
 
   //key
 
-  color_key: '#0050B3',
+  color_key: '#1D39C4',
   color_icon: '#6B7588',
   color_text: '#3A3A3C',
   color_border: '#D9DBEA',

@@ -60,7 +60,7 @@ function ButtonAction(props: IProps) {
       {options?.map((item, idx) => {
         const color = item?.color || keySelect(item?.key)?.color;
         const nameIcon = keySelect(item?.key)?.name;
-        if (item?.key === 'phone_call') {
+        if (item?.key === 'phone_call' && item?.onPress === 'object') {
           return (
             <PhoneCall {...item?.onPress} key={idx} style={styles(props, idx).button}>
               <Text>{item?.icon || <IconSnappy size={horizontal ? 14 : Colors.size_icon} name={nameIcon} color={styles1[color].color} />}</Text>

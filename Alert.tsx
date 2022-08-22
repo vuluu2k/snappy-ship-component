@@ -4,6 +4,7 @@ import PropTypes, { InferProps } from 'prop-types';
 import { AntDesign } from '@expo/vector-icons';
 
 import Colors from './Colors';
+import IconSnappy from '@components/IconSnappy';
 
 const propTypes = {
   message: PropTypes.node,
@@ -19,20 +20,38 @@ const defaultProps = {
 
 type IProps = InferProps<typeof propTypes>;
 
+const IconAlert = (props: IProps) => {
+  const { type } = props;
+  let nameIcon = '';
+  let colorIcon = '';
+
+  switch (type) {
+    case 'success':
+      nameIcon = 'success-circle';
+      colorIcon = Colors.polar_green_8;
+      break;
+    case 'error':
+      nameIcon = 'close-circle';
+      colorIcon = Colors.dust_red_7;
+      break;
+    case 'warn':
+      nameIcon = 'success-circle';
+      colorIcon = Colors.sunset_orange_7;
+      break;
+    default:
+      nameIcon = 'etc';
+      break;
+  }
+
+  return <IconSnappy name={nameIcon} color={colorIcon} size={16} />;
+};
 function Alert(props: IProps) {
   const { message, type, children, style, icon } = props;
 
   return (
     <View style={[styles.common, type && styles[type], style]}>
-      {icon || (
-        <AntDesign
-          name="infocirlceo"
-          size={16}
-          color={(type === 'success' && Colors.daybreak_blue_6) || (type === 'error' && Colors.volcano_6) || Colors.color_icon}
-          style={styles.icon_alert}
-        />
-      )}
-      {children || <Text style={{ flex: 1 }}>{message}</Text>}
+      {icon || <IconAlert type={type} />}
+      {children || <Text style={{ flex: 1, marginLeft: 8 }}>{message}</Text>}
     </View>
   );
 }
@@ -43,22 +62,19 @@ Alert.defaultProps = defaultProps;
 
 const styles: any = StyleSheet.create({
   common: {
-    borderWidth: 1,
     padding: 8,
     flexDirection: 'row',
-    alignItems: 'center',
     borderRadius: 8,
   },
   icon_alert: { marginRight: 8 },
   error: {
-    borderColor: Colors.volcano_4,
-    backgroundColor: Colors.volcano_1,
+    backgroundColor: Colors.dust_red_1,
   },
   success: {
     borderColor: Colors.daybreak_blue_1,
     backgroundColor: Colors.daybreak_blue_4,
   },
-  warning: {},
+  warn: {},
 });
 
 export default Alert;

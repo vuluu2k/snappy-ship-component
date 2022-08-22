@@ -79,7 +79,7 @@ export default class ButtonListSelect extends Component<IProps, IState> {
 
   render() {
     const { cols, options, buttonStyle, labelStyle, titleStyle, style, title } = this.props;
-  const { keySelect } = this.state;
+    const { keySelect } = this.state;
 
     return (
       <>

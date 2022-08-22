@@ -165,7 +165,7 @@ export default class DatePicker extends Component<IProps, IState> {
                 },
               }}
             />
-            <ButtonListSelect cols={3} value={shift} options={listShifts} onChange={(event)=>this.setState({shift: event.key})} />
+            <ButtonListSelect cols={3} value={shift} options={listShifts} onChange={event => this.setState({ shift: event.key })} />
           </View>
         </Modal>
       </View>

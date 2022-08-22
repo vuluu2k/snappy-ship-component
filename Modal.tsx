@@ -29,6 +29,7 @@ const propTypes: any = {
   visible: PropTypes.bool,
   styleContainerModal: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
   styleContentModal: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
+  styleContentChildren: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
   titleModal: PropTypes.node,
   children: PropTypes.node,
   onDismiss: PropTypes.func,
@@ -38,6 +39,7 @@ const propTypes: any = {
   onOkText: PropTypes.node,
   supportKeyboard: PropTypes.bool,
   hiddenTitle: PropTypes.bool,
+  disabledOk: PropTypes.bool,
 };
 
 const defaultProps: any = {
@@ -61,11 +63,18 @@ const ModalChildren = ({
   onCancelText,
   onOkText,
   loadingOk,
+  disabledOk,
   supportKeyboard,
   hiddenTitle,
+  styleContentChildren,
+  useFast,
 }: IProps) => {
   return (
-    <KeyboardAvoidingView enabled={supportKeyboard} behavior={'position'} keyboardVerticalOffset={-30} contentContainerStyle={styles.keyboard_view}>
+    <KeyboardAvoidingView
+      enabled={supportKeyboard}
+      behavior={'position'}
+      keyboardVerticalOffset={useFast ? -20 : -30}
+      contentContainerStyle={styles.keyboard_view}>
       <View style={[styles.content_modal, styleContentModal]}>
         {!hiddenTitle && (
           <>
@@ -82,7 +91,7 @@ const ModalChildren = ({
           </>
         )}
         <View>
-          {children}
+          <View style={[{ paddingHorizontal: 16, paddingVertical: 12 }, styleContentChildren]}>{children}</View>
           {((onOk || onCancel) && (
             <View style={[styles.d_flex, { paddingHorizontal: 16 }]}>
               {(
@@ -97,7 +106,7 @@ const ModalChildren = ({
                 </Button>
               ) || null}
               {(onOk && (
-                <Button style={styles.button_modal} size="lg" type="primary" loading={loadingOk} onPress={onOk}>
+                <Button style={styles.button_modal} disabled={disabledOk} size="lg" type="primary" loading={loadingOk} onPress={onOk}>
                   {onOkText || 'Xác nhận'}
                 </Button>
               )) ||
@@ -213,7 +222,7 @@ const styles = StyleSheet.create({
   text_title_modal: {
     color: color_text,
     fontSize: 16,
-    fontWeight: '700',
+    fontFamily: 'Roboto_700Bold',
     paddingHorizontal: 24,
     paddingVertical: 9,
     textAlign: 'center',

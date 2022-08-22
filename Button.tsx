@@ -122,13 +122,14 @@ const styles: any = StyleSheet.create({
   },
 
   text_common: {
-    fontWeight: '500',
+    fontFamily: 'Roboto_500Medium',
   },
   //size
   sm: { height: 24 },
   smd: { height: 26 },
   md: { height: 32 },
   lg: { height: 40 },
+  xl: { height: 48 },
 
   md_icon: { height: 32, width: 32, minWidth: 32 },
   lg_icon: { height: 40, width: 40, minWidth: 40 },

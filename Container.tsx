@@ -7,9 +7,17 @@ const defaultProps = {};
 
 const styles: any = StyleSheet.create({
   container: {
-    flex: 1,
     padding: 16,
     backgroundColor: 'white',
+    // shadowColor: "#000",
+    // shadowOffset: {
+    //   width: 0,
+    //   height: 1,
+    // },
+    // shadowOpacity: 0.18,
+    // shadowRadius: 1.00,
+
+    // elevation: 1,
   },
   space_between: {
     flexDirection: 'row',

@@ -5,11 +5,13 @@ import Modal from 'react-native-modal';
 import { AntDesign } from '@expo/vector-icons';
 
 import Divider from './Divider';
+import ProgressBar from './ProgressBar';
 import Colors from '@constants/Colors';
 
 const propTypes = {
   processing: PropTypes.bool,
   options: PropTypes.array,
+  percentProcessing: PropTypes.number,
 };
 
 const defaultProps = {
@@ -22,11 +24,12 @@ const defaultProps = {
 };
 
 const deviceHeight = Dimensions.get('window').height;
+const deviceWidth = Dimensions.get('window').width;
 
 type IProps = InferProps<typeof propTypes>;
 
 function Processing(props: IProps) {
-  const { processing, options } = props;
+  const { processing, options, percentProcessing } = props;
 
   return (
     <Modal
@@ -40,6 +43,10 @@ function Processing(props: IProps) {
       <View style={{ backgroundColor: '#fff', borderRadius: 8, maxHeight: deviceHeight / 2 }}>
         <Text style={{ textAlign: 'center', paddingTop: 12, fontFamily: 'Roboto_500Medium' }}>Xử lý dữ liệu</Text>
         <Divider />
+
+        <View style={{ alignItems: 'center', marginBottom: 12 }}>
+          <ProgressBar progress={Number(percentProcessing?.toFixed(2))} width={deviceWidth - 64} height={12} borderRadius={10} />
+        </View>
         <ScrollView>
           <View style={{ flex: 1, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', paddingHorizontal: 12 }}>
             {options?.map((item, index) => {

@@ -29,6 +29,27 @@ const statusArray: Array<Object> = [
   { array: ['delivered'], color: 'green', text_color: color_green },
 ];
 
+const trackingStatus = [
+  { name: 'request_received', text: 'Chờ lấy hàng' },
+  { name: 'processing_picked_up', text: 'Đang lấy hàng' },
+  { name: 'import_picking_warehouse', text: 'Nhập kho lấy' },
+  { name: 'import_returning_warehouse', text: 'Nhập kho hoàn' },
+  { name: 'picked_up_fail', text: 'Chưa lấy được hàng' },
+  { name: 'picked_up', text: 'Đã lấy' },
+  { name: 'waiting_on_the_way', text: 'Chờ trung chuyển' },
+  { name: 'processing_on_the_way', text: 'Đang trung chuyển' },
+  { name: 'on_the_way', text: 'Đang trong kho' },
+  { name: 'out_for_delivery', text: 'Đang giao' },
+  { name: 'part_delivery', text: 'Giao một phần' },
+  { name: 'delivered', text: 'Giao thành công' },
+  { name: 'undeliverable', text: 'Giao không thành' },
+  { name: 'waiting_for_return', text: 'Chờ hoàn' },
+  { name: 'on_the_way_returning', text: 'Trung chuyển hoàn' },
+  { name: 'returning', text: 'Đang hoàn' },
+  { name: 'returned', text: 'Đã hoàn' },
+  { name: 'canceled', text: 'Đã hủy' },
+];
+
 export { statusArray };
 
 const propTypes = {
@@ -47,7 +68,7 @@ const propTypes = {
 const defaultProps = {
   statusArray: statusArray,
   status: '',
-  status_vi: 'SnappyExpress',
+  status_vi: undefined,
   type: '',
   label: undefined,
   children: undefined,
@@ -71,7 +92,7 @@ const Status = (props: IProps) => {
           styles[(!base && type) || `base_${type}`],
           styleText,
         ]}>
-        {label || children || status_vi}
+        {label || children || status_vi || trackingStatus.find(item => item.name === status)?.text || 'SnappyExpress'}
       </Text>
     </View>
   );

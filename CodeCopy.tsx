@@ -25,14 +25,14 @@ type IProps = InferProps<typeof propTypes>;
 function CodeCopy(props: IProps) {
   const copyToClipboard = async (text: string) => {
     await Clipboard.setStringAsync(text);
-    Notification.success(`Đã sao chép ${text}`);
+    Notification.success(`Đã sao chép ${String(text)}`);
   };
 
   const { text, index, children, style } = props;
   return (
     <View style={style}>
       <View style={[CommonStyle.d_flex_start]}>
-        <TouchableOpacity onPress={() => copyToClipboard(text)}>
+        <TouchableOpacity onPress={() => copyToClipboard(String(text))}>
           {((text || children) && (
             <Text style={{ color: Colors.geek_blue_7, fontFamily: 'Roboto_500Medium' }}>
               {index && `${index}.`} {children || text}
