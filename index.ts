@@ -26,3 +26,5 @@ export { default as Switch } from './Switch';
 export { default as ListSelect } from './ListSelect';
 export { default as Clock } from './Clock';
 export { default as BarCodeScanner } from './BarCodeScanner';
+export { default as Popup } from './Popup';
+export { default as RangeDatePicker } from './RangeDatePicker';

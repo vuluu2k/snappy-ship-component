@@ -10,6 +10,8 @@ const propTypes = {
   onChange: PropTypes.func,
   onPress: PropTypes.func,
   children: PropTypes.node,
+  value: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  notValue: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -24,8 +26,8 @@ const defaultProps = {
 type IProps = InferProps<typeof propTypes>;
 
 const RadioGroup = (props: IProps) => {
-  const { options, children, onChange, defaultKey } = props;
-  const [keySelect, setKeySelect] = useState(defaultKey || undefined);
+  const { options, children, onChange, defaultKey, value, notValue } = props;
+  const [keySelect, setKeySelect] = useState(defaultKey || value || undefined);
 
   const handleOnChange = (item: any) => {
     if (onChange) onChange(item);
@@ -37,7 +39,7 @@ const RadioGroup = (props: IProps) => {
       {children ||
         options?.map((item: any, idx: number) => (
           <TouchableOpacity onPress={() => handleOnChange(item)} key={idx} style={[{ marginBottom: 12 }]}>
-            <Radio checked={keySelect === item?.key} label={item?.text} />
+            <Radio checked={value ? value === item?.key : notValue && keySelect === item?.key} label={item?.text} />
           </TouchableOpacity>
         ))}
     </View>

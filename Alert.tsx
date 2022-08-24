@@ -35,15 +35,19 @@ const IconAlert = (props: IProps) => {
       colorIcon = Colors.dust_red_7;
       break;
     case 'warn':
-      nameIcon = 'success-circle';
+      nameIcon = 'warn';
       colorIcon = Colors.sunset_orange_7;
+      break;
+    case 'info':
+      nameIcon = 'info';
+      colorIcon = Colors.geek_blue_6;
       break;
     default:
       nameIcon = 'etc';
       break;
   }
 
-  return <IconSnappy name={nameIcon} color={colorIcon} size={16} />;
+  return <IconSnappy name={nameIcon} color={colorIcon} size={16} style={{ marginTop: 2 }} />;
 };
 function Alert(props: IProps) {
   const { message, type, children, style, icon } = props;
@@ -64,17 +68,21 @@ const styles: any = StyleSheet.create({
   common: {
     padding: 8,
     flexDirection: 'row',
-    borderRadius: 8,
+    borderRadius: 4,
   },
   icon_alert: { marginRight: 8 },
   error: {
     backgroundColor: Colors.dust_red_1,
   },
   success: {
-    borderColor: Colors.daybreak_blue_1,
     backgroundColor: Colors.daybreak_blue_4,
   },
-  warn: {},
+  warn: {
+    backgroundColor: Colors.sunset_orange_1,
+  },
+  info: {
+    backgroundColor: Colors.geek_blue_1,
+  },
 });
 
 export default Alert;

@@ -118,55 +118,53 @@ export default class DatePicker extends Component<IProps, IState> {
             onSubmit && onSubmit(dateValue, shiftDate);
             this.onHiddenModalDatePicker();
           }}>
-          <View style={{ padding: 16 }}>
-            <Calendar
-              renderArrow={direction => <MaterialIcons name={`keyboard-arrow-${direction}`} size={16} color="black" />}
-              // @ts-ignore
-              markedDates={{
-                [dateValue]: markingStyle,
-              }}
-              dayComponent={({ date, state, marking }: any) => {
-                return (
-                  <TouchableOpacity onPress={() => state !== 'disabled' && this.onDayPress(date)}>
-                    <View
+          <Calendar
+            renderArrow={direction => <MaterialIcons name={`keyboard-arrow-${direction}`} size={16} color="black" />}
+            // @ts-ignore
+            markedDates={{
+              [dateValue]: markingStyle,
+            }}
+            dayComponent={({ date, state, marking }: any) => {
+              return (
+                <TouchableOpacity onPress={() => state !== 'disabled' && this.onDayPress(date)}>
+                  <View
+                    style={{
+                      backgroundColor: marking?.color || '#fff',
+                      width: 36,
+                      height: 36,
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      borderRadius: 4,
+                    }}>
+                    <Text
                       style={{
-                        backgroundColor: marking?.color || '#fff',
-                        width: 36,
-                        height: 36,
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        borderRadius: 4,
+                        textAlign: 'center',
+                        color: marking?.textColor || state === 'disabled' ? '#f0f0f0' : '#262626',
                       }}>
-                      <Text
-                        style={{
-                          textAlign: 'center',
-                          color: marking?.textColor || state === 'disabled' ? '#f0f0f0' : '#262626',
-                        }}>
-                        {date.day}
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
-                );
-              }}
-              enableSwipeMonths={true}
-              theme={{
-                // @ts-ignore
-                'stylesheet.calendar.main': {
-                  week: {
-                    flexDirection: 'row',
-                    justifyContent: 'space-around',
-                    margin: 0,
-                  },
-                  day: {
-                    padding: 0,
-                    margin: 0,
-                  },
+                      {date.day}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              );
+            }}
+            enableSwipeMonths={true}
+            theme={{
+              // @ts-ignore
+              'stylesheet.calendar.main': {
+                week: {
+                  flexDirection: 'row',
+                  justifyContent: 'space-around',
+                  margin: 0,
                 },
-              }}
-            />
-            <ButtonListSelect cols={3} value={shift} options={listShifts} onChange={event => this.setState({ shift: event.key })} />
-          </View>
+                day: {
+                  padding: 0,
+                  margin: 0,
+                },
+              },
+            }}
+          />
+          <ButtonListSelect cols={3} value={shift} options={listShifts} onChange={event => this.setState({ shift: event.key })} />
         </Modal>
       </View>
     );

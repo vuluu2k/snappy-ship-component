@@ -2,6 +2,15 @@ import { StyleSheet } from 'react-native';
 import Colors from './Colors';
 
 export default StyleSheet.create({
+  // header
+  underText: {
+    fontFamily: 'Roboto_500Medium',
+    color: '#121008',
+    fontSize: 11,
+    textAlign: 'center',
+    marginTop: 3,
+  },
+
   // lib
   d_flex_between: {
     flexDirection: 'row',
