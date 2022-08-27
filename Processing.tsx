@@ -56,9 +56,12 @@ function Processing(props: IProps) {
                     {(item?.isFailed && <AntDesign name="closecircleo" size={18} color={Colors.dust_red_7} />) ||
                       (item?.isProcessed && <AntDesign name="checkcircleo" size={18} color={Colors.polar_green_7} />) || <ActivityIndicator />}
                   </View>
-                  <Text style={{ color: (item?.isFailed && Colors.dust_red_7) || (item?.isProcessed && Colors.polar_green_7) || 'black' }}>
-                    {item.key}
-                  </Text>
+                  {(item.key && (
+                    <Text style={{ color: (item?.isFailed && Colors.dust_red_7) || (item?.isProcessed && Colors.polar_green_7) || 'black' }}>
+                      {item.key || '...'}
+                    </Text>
+                  )) ||
+                    null}
                 </View>
               );
             })}

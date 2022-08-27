@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import PropTypes, { InferProps } from 'prop-types';
-import { AntDesign } from '@expo/vector-icons';
+import { AntDesign, Feather } from '@expo/vector-icons';
 
 import Colors from './Colors';
 import CodeCopy from './CodeCopy';
@@ -31,9 +31,13 @@ const propTypes: any = {
   onCall: PropTypes.oneOfType([PropTypes.object, PropTypes.func]),
   isSelect: PropTypes.bool,
   onSelect: PropTypes.func,
+  onPin: PropTypes.func,
   latestViewId: PropTypes.string,
   cost: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   status: PropTypes.string,
+  isPinned: PropTypes.bool,
+  backgroundColor: PropTypes.oneOfType([PropTypes.string, PropTypes.func, PropTypes.bool]),
+  indexColor: PropTypes.oneOfType([PropTypes.string, PropTypes.func, PropTypes.bool]),
 };
 
 const defaultProps: any = {
@@ -65,12 +69,16 @@ function Card(props: IProps) {
     onFail,
     onSuccess,
     onCall,
+    onPin,
     successText,
     isSelect,
     onSelect,
     latestViewId,
     cost,
     status,
+    isPinned,
+    backgroundColor,
+    indexColor,
   } = props;
   const buttonOptions = [];
   onConvert && buttonOptions.push({ key: 'convert', text: 'Chuyển', onPress: onConvert });
@@ -78,14 +86,20 @@ function Card(props: IProps) {
   onFail && buttonOptions.push({ key: 'fail', text: 'Thất bại', onPress: onFail });
   onSuccess && buttonOptions.push({ key: 'success', text: successText || 'Đã lấy', onPress: onSuccess });
   onCall && buttonOptions.push({ key: 'phone_call', text: 'Gọi', onPress: onCall });
+
   const visibleContent = address || fullName || phoneNumber || packageInfo || note;
+  const indexColorGroup = (indexColor && { backgroundColor: typeof indexColor === 'function' ? indexColor() : indexColor }) || {};
+  const indexColorContainer = indexColor && { borderColor: typeof indexColor === 'function' ? indexColor() : indexColor, borderWidth: 1 };
+  const backgroundColorGroup =
+    (backgroundColor && { backgroundColor: typeof backgroundColor === 'function' ? backgroundColor() : backgroundColor }) || {};
+  const backgroundColorLatestView = latestViewId === code && { backgroundColor: Colors.geek_blue_1 };
 
   return (
     <TouchableOpacity
       onPress={onPressDetail}
       activeOpacity={0.7}
-      style={[styles.container, style, latestViewId === code && { backgroundColor: Colors.geek_blue_1 }]}>
-      <View style={styles.index}>
+      style={[styles.container, style, backgroundColorGroup, indexColorContainer, backgroundColorLatestView]}>
+      <View style={[styles.index, indexColorGroup]}>
         <Text style={{ color: 'white' }}>{index}</Text>
       </View>
 
@@ -103,17 +117,17 @@ function Card(props: IProps) {
             )) ||
               null}
 
-            <Status status={status} />
+            {status && <Status status={status} />}
             {onSelect && <CheckBox checked={isSelect} onChange={onSelect} style={{ marginLeft: 8 }} />}
           </View>
         </View>
-        <Divider style={{ marginBottom: 0 }} />
+        <Divider style={[{ marginBottom: 0},indexColorGroup]} />
       </View>
 
       {/* Content */}
       {visibleContent && (
         <SwipeAble {...swipeAble} disabled={!swipeAble}>
-          <View style={[styles.p_hr_16, { paddingTop: 12 }, latestViewId === code && { backgroundColor: Colors.geek_blue_1 }]}>
+          <View style={[styles.p_hr_16, { paddingTop: 12 }, backgroundColorGroup, backgroundColorLatestView]}>
             <View style={{ flexDirection: 'row', flex: 1, alignItems: 'center' }}>
               <View style={{ flex: 1, marginRight: 8 }}>
                 {((address || fullName || phoneNumber) && (
@@ -176,7 +190,7 @@ function Card(props: IProps) {
           </View>
         </SwipeAble>
       )}
-      {visibleContent && <Divider style={{ marginTop: 0, marginHorizontal: 16 }} />}
+      {visibleContent && <Divider style={[{ marginTop: 0, marginHorizontal: 16 },indexColorGroup]} />}
 
       {/* Footer */}
       <View style={styles.p_hr_16}>
@@ -191,6 +205,14 @@ function Card(props: IProps) {
         )}
         <ButtonAction options={buttonOptions} />
       </View>
+
+      {/* Position */}
+      {/* Pinned */}
+      {onPin && (
+        <TouchableOpacity onPress={onPin} style={[styles.pinnedContainer, { backgroundColor: isPinned ? Colors.calendula_gold_4 : Colors.gray_4 }]}>
+          <Feather name="paperclip" size={12} color={isPinned ? 'black' : 'white'} />
+        </TouchableOpacity>
+      )}
     </TouchableOpacity>
   );
 }
@@ -203,15 +225,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     flex: 1,
     paddingVertical: 12,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.22,
-    shadowRadius: 2.22,
-
-    elevation: 3,
   },
   index: {
     backgroundColor: Colors.gray_4,
@@ -230,6 +243,14 @@ const styles = StyleSheet.create({
   text: { lineHeight: 22 },
   hasNew: { backgroundColor: Colors.calendula_gold_4, borderRadius: 4, paddingHorizontal: 6, marginRight: 8 },
   p_hr_16: { paddingHorizontal: 16 },
+  pinnedContainer: {
+    position: 'absolute',
+    right: 0,
+    bottom: 0,
+    padding: 8,
+    zIndex: 10,
+    borderTopLeftRadius: 8,
+  },
 });
 
 export default Card;

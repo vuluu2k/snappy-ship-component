@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Text, View, StyleSheet, Dimensions, StatusBar, TouchableOpacity, Animated } from 'react-native';
+import { Text, View, StyleSheet, Dimensions, StatusBar, TouchableOpacity, Animated, ActivityIndicator, SafeAreaView, ScrollView } from 'react-native';
 import { Feather, Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import Constants from 'expo-constants';
@@ -7,6 +7,8 @@ import Modal from 'react-native-modal';
 
 import IconSnappy from '@components/IconSnappy';
 import Colors from './Colors';
+import Badge from './Badge';
+import Popup from './Popup';
 
 const deviceHeight = Dimensions.get('window').height;
 const deviceWidth = Dimensions.get('window').width;
@@ -14,16 +16,18 @@ const deviceWidth = Dimensions.get('window').width;
 type IProps = {
   onScan: (event: any) => void;
   onClose: () => void;
-  onOkWarn: () => void;
+  onOkWarn?: () => void;
   children?: any;
-  textWarn: string;
+  textWarn?: string;
   isWarn?: boolean;
-  isScan: boolean;
+  isScan?: boolean;
+  countData?: number;
 };
 
 export default function SnyBarCodeScanner(props: IProps) {
-  const { onScan, onClose, children, textWarn, isWarn, onOkWarn, isScan } = props;
+  const { onScan, onClose, children, textWarn, isWarn, onOkWarn, isScan, countData } = props;
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
+  const [dataProcess, setDataProcess] = useState<string | null>(null);
   const [screen, setScreen] = useState<string>('scan');
   const [sizeQrCode, setSizeQrCode] = useState<any>({ width: 0, height: 0 });
   const lineAnim = useRef(new Animated.Value(0)).current;
@@ -62,6 +66,7 @@ export default function SnyBarCodeScanner(props: IProps) {
 
   const handleBarCodeScanned = ({ type, data }: { type: any; data: any }) => {
     onScan && onScan(data);
+    setDataProcess(data);
   };
 
   if (hasPermission === null) {
@@ -83,8 +88,12 @@ export default function SnyBarCodeScanner(props: IProps) {
 
   return (
     <>
-      <View style={styles.main}>
-        <StatusBar translucent={true} backgroundColor="transparent" barStyle="light-content" />
+      <View style={[styles.main]}>
+        <StatusBar
+          translucent={screen === 'scan'}
+          backgroundColor={screen === 'scan' ? 'transparent' : '#fff'}
+          barStyle={screen === 'scan' ? 'light-content' : 'dark-content'}
+        />
 
         {(screen === 'scan' && (
           <BarCodeScanner onBarCodeScanned={isScan || isWarn ? undefined : handleBarCodeScanned || undefined} style={[styles.container]}>
@@ -110,15 +119,23 @@ export default function SnyBarCodeScanner(props: IProps) {
             <View style={styles.layerBottom} />
           </BarCodeScanner>
         )) ||
-          (screen === 'data' && <View style={{ backgroundColor: 'white' }}>{children}</View>)}
+          (screen === 'data' && (
+            <SafeAreaView style={{ backgroundColor: '#fff' }}>
+              <View style={{ width: deviceWidth, flex: 1, backgroundColor: Colors.color_background }}>
+                <ScrollView>{children}</ScrollView>
+              </View>
+            </SafeAreaView>
+          ))}
 
         {/* Actions */}
-        <TouchableOpacity onPress={onClose} style={styles.close}>
-          <View
-            style={{ backgroundColor: 'rgba(0,0,0,.6)', width: 22, height: 22, alignItems: 'center', justifyContent: 'center', borderRadius: 13 }}>
-            <Ionicons name="ios-close" size={20} color="#fff" />
-          </View>
-        </TouchableOpacity>
+        {screen === 'scan' && (
+          <TouchableOpacity onPress={onClose} style={styles.close}>
+            <View
+              style={{ backgroundColor: 'rgba(0,0,0,.6)', width: 22, height: 22, alignItems: 'center', justifyContent: 'center', borderRadius: 13 }}>
+              <Ionicons name="ios-close" size={20} color="#fff" />
+            </View>
+          </TouchableOpacity>
+        )}
         <View style={styles.bottomAction}>
           <TouchableOpacity onPress={() => setScreen('scan')}>
             <View style={styles.bottomButtonAction}>
@@ -128,22 +145,29 @@ export default function SnyBarCodeScanner(props: IProps) {
           </TouchableOpacity>
           <TouchableOpacity onPress={() => setScreen('data')}>
             <View style={styles.bottomButtonAction}>
-              <IconSnappy name="package-outline" color="#fff" size={20} />
+              <View>
+                <IconSnappy name="package-outline" color="#fff" size={20} />
+                {(countData && <Badge style={{ position: 'absolute', top: -8, right: -8 }} text={countData || 0} />) || null}
+              </View>
               <Text style={styles.bottomTextAction}>Dữ liệu</Text>
             </View>
           </TouchableOpacity>
         </View>
       </View>
 
-      <Modal isVisible={isWarn}>
-        <View style={styles.content_modal}>
-          <MaterialIcons name="error-outline" size={40} color="red" />
-          <Text style={styles.text_modal}>{textWarn || 'Cảnh báo Snappy'}</Text>
-          <TouchableOpacity onPress={onOkWarn}>
-            <View style={styles.btn_ok}>
-              <Text style={{ color: 'white', fontFamily: 'Roboto_500Medium' }}>Đã hiểu</Text>
-            </View>
-          </TouchableOpacity>
+      <Popup visible={isWarn} message={textWarn||'Cảnh báo Snappy'} type="warn" onOk={onOkWarn}   />
+
+      <Modal
+        statusBarTranslucent
+        backdropTransitionOutTiming={0}
+        animationIn="fadeIn"
+        animationOut="fadeOut"
+        isVisible={isScan}
+        deviceWidth={deviceWidth}
+        deviceHeight={deviceHeight + 100}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 100 }}>
+          <ActivityIndicator color="#fff" />
+          <Text style={[{ marginLeft: 8, fontFamily: 'Roboto_500Medium', color: 'white' }]}>Đang xử lý dữ liệu {dataProcess}</Text>
         </View>
       </Modal>
     </>
