@@ -45,7 +45,7 @@ function Processing(props: IProps) {
         <Divider />
 
         <View style={{ alignItems: 'center', marginBottom: 12 }}>
-          <ProgressBar progress={Number(percentProcessing?.toFixed(2))} width={deviceWidth - 64} height={12} borderRadius={10} />
+          <ProgressBar progress={Number(percentProcessing?.toFixed(2))} width={deviceWidth - 64} height={14} borderRadius={10} />
         </View>
         <ScrollView>
           <View style={{ flex: 1, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', paddingHorizontal: 12 }}>

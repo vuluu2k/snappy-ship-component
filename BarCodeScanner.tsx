@@ -22,10 +22,13 @@ type IProps = {
   isWarn?: boolean;
   isScan?: boolean;
   countData?: number;
+  textSuccess?: string;
+  isSuccess?: boolean;
+  onOkSuccess?: () => void;
 };
 
 export default function SnyBarCodeScanner(props: IProps) {
-  const { onScan, onClose, children, textWarn, isWarn, onOkWarn, isScan, countData } = props;
+  const { onScan, onClose, children, textWarn, isWarn, onOkWarn, isScan, countData, textSuccess, isSuccess, onOkSuccess } = props;
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
   const [dataProcess, setDataProcess] = useState<string | null>(null);
   const [screen, setScreen] = useState<string>('scan');
@@ -96,7 +99,7 @@ export default function SnyBarCodeScanner(props: IProps) {
         />
 
         {(screen === 'scan' && (
-          <BarCodeScanner onBarCodeScanned={isScan || isWarn ? undefined : handleBarCodeScanned || undefined} style={[styles.container]}>
+          <BarCodeScanner onBarCodeScanned={isScan || isWarn || isSuccess ? undefined : handleBarCodeScanned || undefined} style={[styles.container]}>
             <View style={styles.layerTop}></View>
             <View style={styles.layerCenter}>
               <View style={styles.layerLeft} />
@@ -155,7 +158,8 @@ export default function SnyBarCodeScanner(props: IProps) {
         </View>
       </View>
 
-      <Popup visible={isWarn} message={textWarn||'Cảnh báo Snappy'} type="warn" onOk={onOkWarn}   />
+      <Popup visible={isWarn} message={textWarn || 'Cảnh báo Snappy'} type="warn" onOk={onOkWarn} />
+      <Popup visible={isSuccess} message={textSuccess} type="success" onOk={onOkSuccess} />
 
       <Modal
         statusBarTranslucent

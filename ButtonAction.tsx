@@ -49,6 +49,10 @@ const keySelect = (key: string) => {
       return { color: 'blue', name: 'phone-call' };
     case 'print':
       return { color: 'orange', name: 'printer-ship' };
+    case 'take':
+      return { color: 'geek', name: 'truck-ship' };
+    default:
+      return;
   }
 };
 
@@ -60,7 +64,7 @@ function ButtonAction(props: IProps) {
       {options?.map((item, idx) => {
         const color = item?.color || keySelect(item?.key)?.color;
         const nameIcon = keySelect(item?.key)?.name;
-        if (item?.key === 'phone_call' && item?.onPress !== 'function') {
+        if (item?.key === 'phone_call' && typeof item?.onPress !== 'function') {
           return (
             <PhoneCall {...item?.onPress} key={idx} style={styles(props, idx).button}>
               <Text>{item?.icon || <IconSnappy size={horizontal ? 14 : Colors.size_icon} name={nameIcon} color={styles1[color].color} />}</Text>
@@ -123,6 +127,10 @@ const styles1: any = StyleSheet.create({
 
   orange: {
     color: Colors.sunset_orange_8,
+  },
+
+  geek: {
+    color: Colors.geek_blue_7,
   },
 });
 

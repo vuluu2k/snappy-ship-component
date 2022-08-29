@@ -255,19 +255,21 @@ function SnyCamera(props: IProps) {
               )}
             </View>
           )) || (
-            <View style={styles.buttonContainer}>
-              <TouchableOpacity style={styles.buttonLeft} onPress={onResumeCamera}>
-                <Text style={styles.text_take}>Chụp lại</Text>
-              </TouchableOpacity>
-              {multiple && (
-                <TouchableOpacity style={styles.buttonCenter} onPress={takeMorePicture}>
-                  <Text style={styles.text_take}>Chụp thêm</Text>
+            <SafeAreaView style={{ flex: 1 }}>
+              <View style={styles.buttonContainer}>
+                <TouchableOpacity style={styles.buttonLeft} onPress={onResumeCamera}>
+                  <Text style={styles.text_take}>Chụp lại</Text>
                 </TouchableOpacity>
-              )}
-              <TouchableOpacity style={styles.buttonRight} onPress={multiple ? onShowViewImage : handleSubmit}>
-                <Text style={styles.text_take}>{multiple ? 'Xem ảnh đã chụp' : 'Sử dụng ảnh'}</Text>
-              </TouchableOpacity>
-            </View>
+                {multiple && (
+                  <TouchableOpacity style={styles.buttonCenter} onPress={takeMorePicture}>
+                    <Text style={styles.text_take}>Chụp thêm</Text>
+                  </TouchableOpacity>
+                )}
+                <TouchableOpacity style={styles.buttonRight} onPress={multiple ? onShowViewImage : handleSubmit}>
+                  <Text style={styles.text_take}>{multiple ? 'Xem ảnh đã chụp' : 'Sử dụng ảnh'}</Text>
+                </TouchableOpacity>
+              </View>
+            </SafeAreaView>
           )}
         </Camera>
       )) || (
@@ -334,7 +336,7 @@ function SnyCamera(props: IProps) {
           </View>
         )) || (
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 100 }}>
-            <Text>Lỗi: {uploadResult?. message}</Text>
+            <Text>Lỗi: {uploadResult?.message}</Text>
             <TouchableOpacity
               onPress={onResumeCamera}
               style={{ backgroundColor: 'rgba(0,0,0,.6)', paddingVertical: 8, paddingHorizontal: 16, borderRadius: 6 }}>

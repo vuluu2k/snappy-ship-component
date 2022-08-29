@@ -12,6 +12,7 @@ import SwipeAble from './SwipeAble';
 import CheckBox from './CheckBox';
 import CommonStyle from './CommonStyle';
 import Status from './Status';
+import Badge from './Badge';
 
 const propTypes: any = {
   index: PropTypes.number,
@@ -29,6 +30,7 @@ const propTypes: any = {
   onFail: PropTypes.oneOfType([PropTypes.object, PropTypes.func]),
   onSuccess: PropTypes.func,
   onCall: PropTypes.oneOfType([PropTypes.object, PropTypes.func]),
+  onTake: PropTypes.func,
   isSelect: PropTypes.bool,
   onSelect: PropTypes.func,
   onPin: PropTypes.func,
@@ -38,6 +40,10 @@ const propTypes: any = {
   isPinned: PropTypes.bool,
   backgroundColor: PropTypes.oneOfType([PropTypes.string, PropTypes.func, PropTypes.bool]),
   indexColor: PropTypes.oneOfType([PropTypes.string, PropTypes.func, PropTypes.bool]),
+  hasTask: PropTypes.string,
+  isSameDistrict: PropTypes.bool,
+  addressSameDistrict: PropTypes.string,
+  notArrowDetail: PropTypes.bool,
 };
 
 const defaultProps: any = {
@@ -69,6 +75,7 @@ function Card(props: IProps) {
     onFail,
     onSuccess,
     onCall,
+    onTake,
     onPin,
     successText,
     isSelect,
@@ -79,13 +86,21 @@ function Card(props: IProps) {
     isPinned,
     backgroundColor,
     indexColor,
+    hasTask,
+    isSameDistrict,
+    addressSameDistrict,
+    notArrowDetail,
   } = props;
+
+  const isActionShow = ['processing_picked_up', 'out_for_delivery', 'returning'].includes(status);
   const buttonOptions = [];
+
   onConvert && buttonOptions.push({ key: 'convert', text: 'Chuyển', onPress: onConvert });
-  onPrint && buttonOptions.push({ key: 'printer', text: 'In đơn', onPress: onPrint });
-  onFail && buttonOptions.push({ key: 'fail', text: 'Thất bại', onPress: onFail });
-  onSuccess && buttonOptions.push({ key: 'success', text: successText || 'Đã lấy', onPress: onSuccess });
+  onPrint && isActionShow && buttonOptions.push({ key: 'printer', text: 'In đơn', onPress: onPrint });
+  onFail && isActionShow && buttonOptions.push({ key: 'fail', text: 'Thất bại', onPress: onFail });
+  onSuccess && isActionShow && buttonOptions.push({ key: 'success', text: successText || 'Đã lấy', onPress: onSuccess });
   onCall && buttonOptions.push({ key: 'phone_call', text: 'Gọi', onPress: onCall });
+  onTake && !isActionShow && isSameDistrict && buttonOptions.push({ key: 'take', text: 'Nhận giao', onPress: onTake });
 
   const visibleContent = address || fullName || phoneNumber || packageInfo || note;
   const indexColorGroup = (indexColor && { backgroundColor: typeof indexColor === 'function' ? indexColor() : indexColor }) || {};
@@ -112,16 +127,28 @@ function Card(props: IProps) {
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             {(hasNew && (
               <View style={styles.hasNew}>
-                <Text>Mới</Text>
+                <Text style={{ lineHeight: 22 }}>KH Mới</Text>
               </View>
             )) ||
               null}
 
-            {status && <Status status={status} />}
+            {(hasTask && (
+              <View style={styles[hasTask]}>
+                <Text style={{ color: 'white', lineHeight: 22 }}>NV {hasTask === 'delivery' ? 'Giao' : hasTask === 'pickup' ? 'Lấy' : 'Hoàn'}</Text>
+              </View>
+            )) ||
+              null}
+
+            {status && (
+              <View>
+                <Status status={status} shipper />
+                {isSameDistrict && <Badge size={10} style={{ position: 'absolute', top: -6, right: -6 }} />}
+              </View>
+            )}
             {onSelect && <CheckBox checked={isSelect} onChange={onSelect} style={{ marginLeft: 8 }} />}
           </View>
         </View>
-        <Divider style={[{ marginBottom: 0},indexColorGroup]} />
+        <Divider style={[{ marginBottom: 0 }, indexColorGroup]} />
       </View>
 
       {/* Content */}
@@ -130,7 +157,7 @@ function Card(props: IProps) {
           <View style={[styles.p_hr_16, { paddingTop: 12 }, backgroundColorGroup, backgroundColorLatestView]}>
             <View style={{ flexDirection: 'row', flex: 1, alignItems: 'center' }}>
               <View style={{ flex: 1, marginRight: 8 }}>
-                {((address || fullName || phoneNumber) && (
+                {((address || fullName || phoneNumber || (isSameDistrict && addressSameDistrict)) && (
                   <View style={styles.content}>
                     <View>
                       <Text style={styles.right}>
@@ -145,6 +172,7 @@ function Card(props: IProps) {
                       )) ||
                         null}
                       {(address && <Text style={styles.text}>{address}</Text>) || null}
+                      {addressSameDistrict && <Text style={styles.text}>{addressSameDistrict}</Text>}
                     </View>
                   </View>
                 )) ||
@@ -185,12 +213,12 @@ function Card(props: IProps) {
                   </View>
                 )}
               </View>
-              <AntDesign name="right" size={Colors.size_icon} />
+              {!notArrowDetail && <AntDesign name="right" size={Colors.size_icon} />}
             </View>
           </View>
         </SwipeAble>
       )}
-      {visibleContent && <Divider style={[{ marginTop: 0, marginHorizontal: 16 },indexColorGroup]} />}
+      {visibleContent && <Divider style={[{ marginTop: 0, marginHorizontal: 16 }, indexColorGroup]} />}
 
       {/* Footer */}
       <View style={styles.p_hr_16}>
@@ -220,7 +248,28 @@ function Card(props: IProps) {
 Card.propTypes = propTypes;
 Card.defaultProps = defaultProps;
 
-const styles = StyleSheet.create({
+const styles: any = StyleSheet.create({
+  delivery: {
+    backgroundColor: Colors.daybreak_blue_7,
+    borderRadius: 4,
+    paddingHorizontal: 6,
+    marginRight: 8,
+  },
+
+  pickup: {
+    backgroundColor: Colors.golden_purple_6,
+    borderRadius: 4,
+    paddingHorizontal: 6,
+    marginRight: 8,
+  },
+
+  return: {
+    backgroundColor: Colors.volcano_7,
+    borderRadius: 4,
+    paddingHorizontal: 6,
+    marginRight: 8,
+  },
+
   container: {
     backgroundColor: '#fff',
     flex: 1,

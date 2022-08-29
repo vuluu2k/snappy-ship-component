@@ -52,6 +52,7 @@ export default {
   polar_green_4: '#95DE64',
   polar_green_1: '#F6FFED',
 
+  volcano_7: '#D4380D',
   volcano_6: '#FA541C',
   volcano_4: '#FF9C6E',
   volcano_1: '#FFF2E8',

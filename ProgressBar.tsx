@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes, { InferProps } from 'prop-types';
-import { Animated, Easing, View, I18nManager } from 'react-native';
+import { Animated, Easing, View, I18nManager, Text } from 'react-native';
 
 const INDETERMINATE_WIDTH_FACTOR = 0.3;
 const BAR_WIDTH_ZERO_POSITION = INDETERMINATE_WIDTH_FACTOR / (1 + INDETERMINATE_WIDTH_FACTOR);
@@ -120,7 +120,7 @@ export default class ProgressBar extends Component<IProps, IState> {
   }
 
   render() {
-    const { borderColor, borderRadius, borderWidth, children, color, height, style, unfilledColor, width, ...restProps } = this.props;
+    const { borderColor, borderRadius, borderWidth, children, color, height, style, unfilledColor, width, progress, ...restProps } = this.props;
 
     const innerWidth = Math.max(0, width || this.state.width) - (borderWidth || 0) * 2;
     const containerStyle = {
@@ -161,6 +161,11 @@ export default class ProgressBar extends Component<IProps, IState> {
       // @ts-ignore
       <View style={[containerStyle, style]} onLayout={this.handleLayout} {...restProps}>
         <Animated.View style={progressStyle} />
+        {/* @ts-ignore */}
+        <View style={{ position: 'absolute', width: width, height: height, alignItems: 'center' }}>
+          <Text style={{ fontFamily: 'Roboto_500Medium' }}>{Math.round((progress || 0) * 100)}%</Text>
+        </View>
+
         {children}
       </View>
     );

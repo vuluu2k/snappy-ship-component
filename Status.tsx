@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import PropTypes, { InferProps } from 'prop-types';
+import IconSnappy from '@components/IconSnappy';
 
 const color_orange = '#ad4e00';
 const bg_orange = '#fff7e6';
@@ -31,10 +32,10 @@ const statusArray: Array<Object> = [
 
 const trackingStatus = [
   { name: 'request_received', text: 'Chờ lấy hàng' },
-  { name: 'processing_picked_up', text: 'Đang lấy hàng' },
+  { name: 'processing_picked_up', text: 'Đang lấy' },
   { name: 'import_picking_warehouse', text: 'Nhập kho lấy' },
   { name: 'import_returning_warehouse', text: 'Nhập kho hoàn' },
-  { name: 'picked_up_fail', text: 'Chưa lấy được hàng' },
+  { name: 'picked_up_fail', text: 'Lấy thất bại' },
   { name: 'picked_up', text: 'Đã lấy' },
   { name: 'waiting_on_the_way', text: 'Chờ trung chuyển' },
   { name: 'processing_on_the_way', text: 'Đang trung chuyển' },
@@ -42,15 +43,36 @@ const trackingStatus = [
   { name: 'out_for_delivery', text: 'Đang giao' },
   { name: 'part_delivery', text: 'Giao một phần' },
   { name: 'delivered', text: 'Giao thành công' },
-  { name: 'undeliverable', text: 'Giao không thành' },
+  { name: 'undeliverable', text: 'Giao thất bại' },
   { name: 'waiting_for_return', text: 'Chờ hoàn' },
   { name: 'on_the_way_returning', text: 'Trung chuyển hoàn' },
   { name: 'returning', text: 'Đang hoàn' },
   { name: 'returned', text: 'Đã hoàn' },
   { name: 'canceled', text: 'Đã hủy' },
+  { name: 'success', text: 'Thành công' },
+  { name: 'failed', text: 'Thất bại' },
+  { name: 'new', text: 'Đang thực hiện' },
 ];
 
-export { statusArray };
+const statusArrayShip: Array<any> = [
+  {
+    array: ['processing_picked_up', 'out_for_delivery', 'returning', 'new'],
+    color: '#1D39C4',
+    icon: <IconSnappy name="refresh" color="#1D39C4" size={14} />,
+  },
+  {
+    array: ['picked_up', 'delivered', 'returned', 'success'],
+    color: '#237804',
+    icon: <IconSnappy name="success-circle" color="#237804" size={14} />,
+  },
+  {
+    array: ['undeliverable', 'picked_up_fail', 'failed', 'canceled'],
+    color: '#CF1322',
+    icon: <IconSnappy name="close-circle" color="#CF1322" size={14} />,
+  },
+];
+
+export { statusArray, statusArrayShip };
 
 const propTypes = {
   statusArray: PropTypes.array,
@@ -63,6 +85,7 @@ const propTypes = {
   styleText: PropTypes.object,
   requestCounter: PropTypes.number,
   base: PropTypes.bool,
+  shipper: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -79,8 +102,18 @@ const defaultProps = {
 type IProps = InferProps<typeof propTypes>;
 
 const Status = (props: IProps) => {
-  const { status, statusArray, status_vi, type, label, children, style, styleText, base } = props;
-  const checkStatus = statusArray?.find(item => item.array.includes(status));
+  const { status, statusArray, status_vi, type, label, children, style, styleText, base, shipper } = props;
+  const checkStatus = shipper ? statusArrayShip?.find(item => item.array.includes(status)) : statusArray?.find(item => item.array.includes(status));
+
+  if (shipper)
+    return (
+      <View style={styles.container_shipper}>
+        {checkStatus?.icon}
+        <Text style={{ color: checkStatus?.color, marginLeft: 4, fontFamily: 'Roboto_500Medium' }}>
+          {trackingStatus.find(item => item.name === status)?.text}
+        </Text>
+      </View>
+    );
 
   return (
     <View
@@ -109,6 +142,7 @@ const base_common: any = {
 
 const styles: any = StyleSheet.create({
   container: { flexDirection: 'row', alignItems: 'center' },
+  container_shipper: { flexDirection: 'row', alignItems: 'center' },
   container_btn: { position: 'relative' },
   badge: { position: 'absolute', top: -4, right: 4 },
   sny_status: {

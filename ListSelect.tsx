@@ -53,7 +53,7 @@ export default class ListSelect extends Component<IProps, IState> {
   renderItem = ({ item, idx }: { item: any; idx: number }) => {
     const { styleOptions, styleLabelOption } = this.props;
 
-    const { content, subText, text, icon } = item;
+    const { content, subText, text, icon, textArrow } = item;
     const ComponentIcon = icon?.component;
 
     return (
@@ -71,7 +71,10 @@ export default class ListSelect extends Component<IProps, IState> {
             {subText && <Text style={[item?.styleSubText, { color: Colors.gray_4 }]}>{subText}</Text>}
           </View>
 
-          <View style={{ paddingRight: 16 }}>{item?.arrowIcon || <AntDesign name="right" size={16} color={Colors.neutral_6} />}</View>
+          <View style={{ paddingRight: 16, flexDirection: 'row', alignItems: 'center' }}>
+            {!!textArrow && <Text style={{ color: Colors.gray_4 }}>{textArrow || ''}</Text>}
+            {item?.arrowIcon || <AntDesign name="right" size={16} color={Colors.gray_2} />}
+          </View>
         </View>
       </TouchableOpacity>
     );

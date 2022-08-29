@@ -130,7 +130,7 @@ export default class DropDownButton extends Component<IProps, IState> {
                           )}
                           <Text
                             style={{
-                              fontWeight: '500',
+                              fontFamily: 'Roboto_500Medium',
                               color: keySelect === item.key ? color_text_active : '#595959',
                             }}>
                             {item.text}
