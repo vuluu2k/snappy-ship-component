@@ -244,7 +244,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
   },
 
-  keyboard_view: { paddingBottom: 20, backgroundColor: '#fff', borderTopLeftRadius: 10, borderTopRightRadius: 10 },
+  keyboard_view: { paddingBottom: 40, backgroundColor: '#fff', borderTopLeftRadius: 10, borderTopRightRadius: 10 },
 
   icon_close: { textAlign: 'left', position: 'absolute', right: 24, zIndex: 10 },
   container_icon_close: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 24, position: 'relative' },

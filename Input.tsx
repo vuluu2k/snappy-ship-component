@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, ActivityIndicator, Linking } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, ActivityIndicator, Linking, Platform } from 'react-native';
 import PropTypes, { InferProps } from 'prop-types';
 import * as Clipboard from 'expo-clipboard';
 
@@ -34,16 +34,6 @@ const propTypes: any = {
 type IProps = InferProps<typeof propTypes> & InputProps;
 
 const Input = React.forwardRef((props: IProps, ref: any) => {
-  const [isFocus, setFocus] = useState<boolean>(props?.autoFocus || false);
-  const [securePassword, setSecurePassword] = useState<any>(props?.secureTextEntry);
-
-  const handleEyePassword = () => setSecurePassword(!securePassword);
-
-  const copyToClipboard = async (text: string) => {
-    await Clipboard.setStringAsync(text);
-    Notification.success(`Đã sao chép ${text}`);
-  };
-
   const {
     title,
     placeholder,
@@ -71,6 +61,27 @@ const Input = React.forwardRef((props: IProps, ref: any) => {
     loading,
     hasCallAction,
   } = props;
+  const [isFocus, setFocus] = useState<boolean>(props?.autoFocus || false);
+  const [securePassword, setSecurePassword] = useState<any>(props?.secureTextEntry);
+  const inputRef = useRef<any>(null);
+
+  const handleEyePassword = () => setSecurePassword(!securePassword);
+
+  const copyToClipboard = async (text: string) => {
+    await Clipboard.setStringAsync(text);
+    Notification.success(`Đã sao chép ${text}`);
+  };
+
+  useEffect(() => {
+    const timeout =
+      autoFocus &&
+      Platform.OS === 'android' &&
+      setTimeout(() => {
+        inputRef?.current?.blur();
+        inputRef?.current?.focus();
+      }, 300);
+    return () => clearTimeout(timeout);
+  }, []);
 
   const ComponentIcon = iconTitle?.component;
   return (
@@ -91,7 +102,7 @@ const Input = React.forwardRef((props: IProps, ref: any) => {
       )}
       <TextInput
         autoFocus={autoFocus}
-        ref={ref}
+        ref={ref || inputRef}
         placeholder={placeholder || (title && `Nhập ${title.toLowerCase()}`)}
         value={value}
         autoCapitalize={autoCapitalize}

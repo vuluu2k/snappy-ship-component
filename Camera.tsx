@@ -33,6 +33,7 @@ const propTypes = {
   onClose: PropTypes.func,
   onTakePhoto: PropTypes.func,
   multiple: PropTypes.bool,
+  disabledLibrary: PropTypes.bool
 };
 const defaultProps = {
   type: 'back',
@@ -41,7 +42,7 @@ const defaultProps = {
 type IProps = InferProps<typeof propTypes>;
 
 function SnyCamera(props: IProps) {
-  const { type: typeProp, onClose, onTakePhoto, multiple } = props;
+  const { type: typeProp, onClose, onTakePhoto, multiple,disabledLibrary } = props;
   const [type, setType] = useState<CameraType>(typeProp === 'back' ? CameraType.back : CameraType.front);
   const [flashMode, setFlashMode] = useState<FlashMode>(FlashMode.off);
   const [permission, requestPermission] = Camera.useCameraPermissions();
@@ -102,6 +103,8 @@ function SnyCamera(props: IProps) {
   }
 
   const takePictureFromLibrary = async () => {
+    if(disabledLibrary) return Notification.error('Không cho phép truy cập vào thư viện')
+
     const photo: any = await takePhotoFromLibrary();
 
     if (photo?.uri) {

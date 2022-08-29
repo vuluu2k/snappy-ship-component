@@ -191,7 +191,7 @@ function Card(props: IProps) {
                   </View>
                 )}
 
-                {note && (
+                {note && note?.length > 0 && (
                   <View style={styles.content}>
                     <View>
                       <Text style={styles.right}>
