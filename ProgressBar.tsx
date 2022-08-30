@@ -163,7 +163,7 @@ export default class ProgressBar extends Component<IProps, IState> {
         <Animated.View style={progressStyle} />
         {/* @ts-ignore */}
         <View style={{ position: 'absolute', width: width, height: height, alignItems: 'center' }}>
-          <Text style={{ fontFamily: 'Roboto_500Medium' }}>{Math.round((progress || 0) * 100)}%</Text>
+          <Text style={{ fontFamily: 'Roboto_500Medium' }}>{!!Math.round((progress || 0) * 100) ? Math.round((progress || 0) * 100) : 0}%</Text>
         </View>
 
         {children}

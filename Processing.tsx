@@ -58,7 +58,7 @@ function Processing(props: IProps) {
                   </View>
                   {(item.key && (
                     <Text style={{ color: (item?.isFailed && Colors.dust_red_7) || (item?.isProcessed && Colors.polar_green_7) || 'black' }}>
-                      {item.key || '...'}
+                      {item.key || 'Đang lấy dữ liệu'}
                     </Text>
                   )) ||
                     null}

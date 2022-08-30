@@ -4,7 +4,7 @@ import PropTypes, { InferProps } from 'prop-types';
 
 import Colors from './Colors';
 import IconSnappy from '@components/IconSnappy';
-import PhoneCall from '@components/Common/Links/PhoneCall';
+import PhoneCall from './PhoneCall';
 
 const propTypes = {
   options: PropTypes.array,
@@ -64,6 +64,9 @@ function ButtonAction(props: IProps) {
       {options?.map((item, idx) => {
         const color = item?.color || keySelect(item?.key)?.color;
         const nameIcon = keySelect(item?.key)?.name;
+
+        if (item?.disabled) return null;
+
         if (item?.key === 'phone_call' && typeof item?.onPress !== 'function') {
           return (
             <PhoneCall {...item?.onPress} key={idx} style={styles(props, idx).button}>

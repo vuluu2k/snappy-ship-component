@@ -29,3 +29,6 @@ export { default as BarCodeScanner } from './BarCodeScanner';
 export { default as Popup } from './Popup';
 export { default as RangeDatePicker } from './RangeDatePicker';
 export { default as Camera } from './Camera';
+export { default as IconList } from './IconList';
+export { default as PhoneCall } from './PhoneCall';
+export { default as ModalOTP } from './ModalOTP';

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
 import PropTypes, { InferProps } from 'prop-types';
+import Colors from '@constants/Colors';
 
 const propTypes: any = {
   text: PropTypes.node,
@@ -8,6 +9,7 @@ const propTypes: any = {
   style: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
   icon: PropTypes.node,
   image: PropTypes.string,
+  loading: PropTypes.bool,
 };
 
 const defaultProps: any = {
@@ -23,17 +25,18 @@ export class Avatar extends Component<IProps> {
   static defaultProps: { text: string; size: number; style: {} };
 
   render() {
-    const { text, style, icon, image, source, onPress, disabled } = this.props;
+    const { text, style, icon, image, source, onPress, disabled, size, loading } = this.props;
 
     return (
       <TouchableOpacity onPress={onPress} disabled={disabled || !onPress}>
-        {((image || source) && (
-          <Image source={(image?.startsWith('https://') && { uri: image }) || source} style={[styles(this.props).image, style]} />
-        )) || (
-          <View style={[styles(this.props).container, style]}>
-            {icon || (text && <Text style={styles(this.props).text}>{(text?.length <= 6 && text) || text.slice(0, 6).toUpperCase()}</Text>)}
-          </View>
-        )}
+        {(loading && <ActivityIndicator size={size / 1.5} color={Colors.color_key} />) ||
+          ((image || source) && (
+            <Image source={(image?.startsWith('https://') && { uri: image }) || source} style={[styles(this.props).image, style]} />
+          )) || (
+            <View style={[styles(this.props).container, style]}>
+              {icon || (text && <Text style={styles(this.props).text}>{(text?.length <= 6 && text) || text.slice(0, 6).toUpperCase()}</Text>)}
+            </View>
+          )}
       </TouchableOpacity>
     );
   }

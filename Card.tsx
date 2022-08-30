@@ -104,16 +104,12 @@ function Card(props: IProps) {
 
   const visibleContent = address || fullName || phoneNumber || packageInfo || note;
   const indexColorGroup = (indexColor && { backgroundColor: typeof indexColor === 'function' ? indexColor() : indexColor }) || {};
-  const indexColorContainer = indexColor && { borderColor: typeof indexColor === 'function' ? indexColor() : indexColor, borderWidth: 1 };
   const backgroundColorGroup =
     (backgroundColor && { backgroundColor: typeof backgroundColor === 'function' ? backgroundColor() : backgroundColor }) || {};
   const backgroundColorLatestView = latestViewId === code && { backgroundColor: Colors.geek_blue_1 };
 
   return (
-    <TouchableOpacity
-      onPress={onPressDetail}
-      activeOpacity={0.7}
-      style={[styles.container, style, backgroundColorGroup, indexColorContainer, backgroundColorLatestView]}>
+    <TouchableOpacity onPress={onPressDetail} activeOpacity={0.7} style={[styles.container, style, backgroundColorGroup, backgroundColorLatestView]}>
       <View style={[styles.index, indexColorGroup]}>
         <Text style={{ color: 'white' }}>{index}</Text>
       </View>
@@ -148,7 +144,7 @@ function Card(props: IProps) {
             {onSelect && <CheckBox checked={isSelect} onChange={onSelect} style={{ marginLeft: 8 }} />}
           </View>
         </View>
-        <Divider style={[{ marginBottom: 0 }, indexColorGroup]} />
+        <Divider style={[{ marginBottom: 0 }]} />
       </View>
 
       {/* Content */}
@@ -191,7 +187,7 @@ function Card(props: IProps) {
                   </View>
                 )}
 
-                {note && note?.length > 0 && (
+                {note && (
                   <View style={styles.content}>
                     <View>
                       <Text style={styles.right}>
@@ -218,7 +214,7 @@ function Card(props: IProps) {
           </View>
         </SwipeAble>
       )}
-      {visibleContent && <Divider style={[{ marginTop: 0, marginHorizontal: 16 }, indexColorGroup]} />}
+      {visibleContent && <Divider style={[{ marginTop: 0, marginHorizontal: 16 }]} />}
 
       {/* Footer */}
       <View style={styles.p_hr_16}>
@@ -237,8 +233,8 @@ function Card(props: IProps) {
       {/* Position */}
       {/* Pinned */}
       {onPin && (
-        <TouchableOpacity onPress={onPin} style={[styles.pinnedContainer, { backgroundColor: isPinned ? Colors.calendula_gold_4 : Colors.gray_4 }]}>
-          <Feather name="paperclip" size={12} color={isPinned ? 'black' : 'white'} />
+        <TouchableOpacity onPress={onPin} style={[styles.pinnedContainer, { backgroundColor: isPinned ? Colors.sunset_orange_7 : Colors.gray_2 }]}>
+          <Feather name="paperclip" size={12} color={'white'} />
         </TouchableOpacity>
       )}
     </TouchableOpacity>
