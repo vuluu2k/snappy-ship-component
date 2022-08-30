@@ -6,6 +6,7 @@ export default {
   daybreak_blue_4: '#69C0FF',
   daybreak_blue_1: '#E6F7FF',
 
+  geek_blue_8: '#10239E',
   geek_blue_7: '#1D39C4',
   geek_blue_6: '#2F54EB',
   geek_blue_5: '#597EF7',
