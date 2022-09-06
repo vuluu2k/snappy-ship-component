@@ -97,7 +97,7 @@ const Input = React.forwardRef((props: IProps, ref: any) => {
               style={{ marginRight: 8 }}
             />
           )}
-          <Text style={[{ fontWeight: '500' }, styleLabelTitle]}>{title}</Text>
+          <Text style={[{ fontFamily: 'Roboto_500Medium' }, styleLabelTitle]}>{title}</Text>
         </View>
       )}
       <TextInput
@@ -113,7 +113,7 @@ const Input = React.forwardRef((props: IProps, ref: any) => {
           {
             backgroundColor: '#fff',
             borderWidth: isFocus ? 1.5 : 1,
-            borderColor: isFocus ? '#3E6DCC' : Colors.gray_1,
+            borderColor: isFocus ? '#000' : Colors.gray_1,
             height: 40,
           },
           style,

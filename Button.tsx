@@ -152,7 +152,7 @@ const styles: any = StyleSheet.create({
   },
 
   primary: {
-    backgroundColor: Colors.logo_snappy,
+    backgroundColor: '#000',
   },
 
   text_primary: {
