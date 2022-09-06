@@ -11,6 +11,7 @@ const propTypes = {
   rightTitle: PropTypes.string,
   leftTitle: PropTypes.string,
   disabled: PropTypes.bool,
+  children:PropTypes.node
 };
 
 const defaultProps = {
@@ -102,7 +103,6 @@ export default class SwipeAble extends React.Component<IProps> {
             <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
               <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                 <ActivityIndicator color="#fff" />
-                <Text style={{ fontSize: 10, color: '#fff' }}>xin đợi...</Text>
               </View>
               <View>
                 <Text style={styles.actionButtonText}>{leftTitle || ''}</Text>
@@ -115,7 +115,6 @@ export default class SwipeAble extends React.Component<IProps> {
             <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
               <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                 <ActivityIndicator color="#fff" />
-                <Text style={{ fontSize: 10, color: '#fff' }}>xin đợi...</Text>
               </View>
               <View>
                 <Text style={styles.actionButtonText}>{rightTitle || ''}</Text>

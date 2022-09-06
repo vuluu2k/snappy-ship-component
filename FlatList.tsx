@@ -4,6 +4,7 @@ import PropTypes, { InferProps } from 'prop-types';
 
 import Empty from './Empty';
 import { LoadMore } from '@components/Lottie';
+import { FlashList } from '@shopify/flash-list';
 
 const screen = Dimensions.get('screen');
 
@@ -19,7 +20,6 @@ const propTypes: any = {
   onScroll: PropTypes.func,
   onLoadMore: PropTypes.func,
   hasMore: PropTypes.bool,
-  getItemLayout: PropTypes.func,
 };
 
 const defaultProps: any = {
@@ -52,7 +52,7 @@ const FlatList = React.forwardRef((props: IProps, ref: any) => {
     ItemSeparatorComponent,
     showsVerticalScrollIndicator,
     ListHeaderComponent,
-    getItemLayout,
+    estimatedItemSize,
   } = props;
 
   return (
@@ -62,7 +62,7 @@ const FlatList = React.forwardRef((props: IProps, ref: any) => {
           <LoadMore />
         </View>
       )) || (
-        <FlatListNative
+        <FlashList
           ref={ref}
           {...props}
           ListHeaderComponent={ListHeaderComponent}
@@ -75,13 +75,13 @@ const FlatList = React.forwardRef((props: IProps, ref: any) => {
           ListFooterComponent={data?.length !== 0 && loading && hasMore && ListFooterComponent}
           ItemSeparatorComponent={ItemSeparatorComponent}
           refreshing={refreshing}
-          onEndReached={!loading && onLoadMore}
+          onEndReached={(!loading && onLoadMore) || (() => {})}
           onEndReachedThreshold={0.1}
           scrollEventThrottle={16}
           onScroll={onScroll}
           ListEmptyComponent={(!loading && <Empty />) || null}
           removeClippedSubviews={true}
-          getItemLayout={getItemLayout}
+          estimatedItemSize={estimatedItemSize || 100}
         />
       )}
     </>

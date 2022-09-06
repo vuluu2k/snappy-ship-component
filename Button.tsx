@@ -21,6 +21,7 @@ const propTypes = {
   position: PropTypes.string,
   activeOpacity: PropTypes.number,
   notClick: PropTypes.bool,
+  children:PropTypes.node
 };
 
 const defaultProps = {
