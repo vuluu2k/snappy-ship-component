@@ -32,3 +32,6 @@ export { default as Camera } from './Camera';
 export { default as IconList } from './IconList';
 export { default as PhoneCall } from './PhoneCall';
 export { default as ModalOTP } from './ModalOTP';
+export { default as Tab } from './Tab';
+export { default as Info } from './Info';
+export { default as ConfirmButton } from './ConfirmButton';

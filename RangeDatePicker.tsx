@@ -59,10 +59,10 @@ const defaultProps = {
   visibleStart: false,
   visibleEnd: false,
   theme: {
-    markColor: '#2A2565',
+    markColor: '#100f1c',
     markTextColor: '#ffffff',
-    markCenterColor: Colors.geek_blue_1,
-    markTextCenterColor: '#096DD9',
+    markCenterColor: '#ababb0',
+    markTextCenterColor: '#fff',
   },
   onChange: (startDate: string | number, endDate: string | number) => console.log(startDate, ' - ', endDate),
   showSelectDay: true,
@@ -294,7 +294,7 @@ export default class RangeDatePicker extends Component<IProps, IState> {
                     marking?.startingDay && { borderTopLeftRadius: 4, borderBottomLeftRadius: 4 },
                     marking?.endingDay && { borderTopRightRadius: 4, borderBottomRightRadius: 4 },
                   ]}>
-                  <Text style={{ color: marking?.textColor || (state === 'disabled' && '#BFBFBF') || '#262626' }}>{date.day}</Text>
+                  <Text style={{ color: marking?.textColor || (state === 'disabled' && '#BFBFBF') || '#262626' }}>{date?.day}</Text>
                 </View>
               </TouchableOpacity>
             );

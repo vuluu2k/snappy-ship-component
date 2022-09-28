@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import PropTypes, { InferProps } from 'prop-types';
 import { AntDesign, Feather } from '@expo/vector-icons';
+import * as Clipboard from 'expo-clipboard';
 
 import Colors from './Colors';
 import CodeCopy from './CodeCopy';
@@ -13,6 +14,8 @@ import CheckBox from './CheckBox';
 import CommonStyle from './CommonStyle';
 import Status from './Status';
 import Badge from './Badge';
+
+import { Notification } from '@components/SnyNotification';
 
 const propTypes: any = {
   index: PropTypes.number,
@@ -92,6 +95,11 @@ function Card(props: IProps) {
     notArrowDetail,
   } = props;
 
+  const copyToClipboard = async (text: string) => {
+    await Clipboard.setStringAsync(text);
+    Notification.success(`Đã sao chép ${String(text)}`);
+  };
+
   const isActionShow = ['processing_picked_up', 'out_for_delivery', 'returning'].includes(status);
   const buttonOptions = [];
 
@@ -110,133 +118,135 @@ function Card(props: IProps) {
 
   return (
     <TouchableOpacity onPress={onPressDetail} activeOpacity={0.7} style={[styles.container, style, backgroundColorGroup, backgroundColorLatestView]}>
-      <View style={[styles.index, indexColorGroup]}>
-        <Text style={{ color: 'white' }}>{index}</Text>
-      </View>
-
-      {/* Header */}
-      <View style={styles.p_hr_16}>
-        <View style={styles.header}>
-          <View style={{ flexDirection: 'row', paddingLeft: 32, alignItems: 'center' }}>
-            <CodeCopy text={code} />
-          </View>
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            {(hasNew && (
-              <View style={styles.hasNew}>
-                <Text style={{ lineHeight: 22 }}>KH Mới</Text>
-              </View>
-            )) ||
-              null}
-
-            {(hasTask && (
-              <View style={styles[hasTask]}>
-                <Text style={{ color: 'white', lineHeight: 22 }}>NV {hasTask === 'delivery' ? 'Giao' : hasTask === 'pickup' ? 'Lấy' : 'Hoàn'}</Text>
-              </View>
-            )) ||
-              null}
-
-            {status && (
-              <View>
-                <Status status={status} shipper />
-                {isSameDistrict && <Badge size={10} style={{ position: 'absolute', top: -6, right: -6 }} />}
-              </View>
-            )}
-            {onSelect && <CheckBox checked={isSelect} onChange={onSelect} style={{ marginLeft: 8 }} />}
-          </View>
+      <View>
+        <View style={[styles.index, indexColorGroup]}>
+          <Text style={{ color: 'white' }}>{index}</Text>
         </View>
-        <Divider style={[{ marginBottom: 0 }]} />
-      </View>
 
-      {/* Content */}
-      {visibleContent && (
-        <SwipeAble {...swipeAble} disabled={!swipeAble}>
-          <View style={[styles.p_hr_16, { paddingTop: 12 }, backgroundColorGroup, backgroundColorLatestView]}>
-            <View style={{ flexDirection: 'row', flex: 1, alignItems: 'center' }}>
-              <View style={{ flex: 1, marginRight: 8 }}>
-                {((address || fullName || phoneNumber || (isSameDistrict && addressSameDistrict)) && (
-                  <View style={styles.content}>
-                    <View>
-                      <Text style={styles.right}>
-                        <IconSnappy name="environment" size={Colors.size_icon} color={Colors.color_icon} />
-                      </Text>
-                    </View>
-                    <View style={styles.left}>
-                      {(fullName && phoneNumber && (
-                        <Text style={styles.text}>
-                          {fullName} - <Text>{phoneNumber}</Text>
+        {/* Header */}
+        <View style={styles.p_hr_16}>
+          <View style={styles.header}>
+            <View style={{ flexDirection: 'row', paddingLeft: 32, alignItems: 'center' }}>
+              <CodeCopy text={code} />
+            </View>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              {(hasNew && (
+                <View style={styles.hasNew}>
+                  <Text style={{ lineHeight: 22 }}>KH Mới</Text>
+                </View>
+              )) ||
+                null}
+
+              {(hasTask && (
+                <View style={styles[hasTask]}>
+                  <Text style={{ color: 'white', lineHeight: 22 }}>NV {hasTask === 'delivery' ? 'Giao' : hasTask === 'pickup' ? 'Lấy' : 'Hoàn'}</Text>
+                </View>
+              )) ||
+                null}
+
+              {status && (
+                <View>
+                  <Status status={status} shipper />
+                  {isSameDistrict && <Badge size={10} style={{ position: 'absolute', top: -6, right: -6 }} />}
+                </View>
+              )}
+              {onSelect && <CheckBox checked={isSelect} onChange={onSelect} style={{ marginLeft: 8 }} />}
+            </View>
+          </View>
+          <Divider style={[{ marginBottom: 0 }]} />
+        </View>
+
+        {/* Content */}
+        {visibleContent && (
+          <SwipeAble {...swipeAble} disabled={!swipeAble}>
+            <View style={[styles.p_hr_16, { paddingTop: 12 }, backgroundColorGroup, backgroundColorLatestView]}>
+              <View style={{ flexDirection: 'row', flex: 1, alignItems: 'center' }}>
+                <View style={{ flex: 1, marginRight: 8 }}>
+                  {((address || fullName || phoneNumber || (isSameDistrict && addressSameDistrict)) && (
+                    <View style={styles.content}>
+                      <View>
+                        <Text style={styles.right}>
+                          <IconSnappy name="environment" size={Colors.size_icon} color={Colors.color_icon} />
                         </Text>
-                      )) ||
-                        null}
-                      {(address && <Text style={styles.text}>{address}</Text>) || null}
-                      {addressSameDistrict && <Text style={styles.text}>{addressSameDistrict}</Text>}
+                      </View>
+                      <TouchableOpacity onLongPress={() => copyToClipboard(`${fullName} - ${phoneNumber}\n${address}`)} style={styles.left}>
+                        {(fullName && phoneNumber && (
+                          <Text style={styles.text}>
+                            {fullName} - <Text>{phoneNumber}</Text>
+                          </Text>
+                        )) ||
+                          null}
+                        {(address && <Text style={styles.text}>{address}</Text>) || null}
+                        {addressSameDistrict && <Text style={styles.text}>{addressSameDistrict}</Text>}
+                      </TouchableOpacity>
                     </View>
-                  </View>
-                )) ||
-                  null}
+                  )) ||
+                    null}
 
-                {packageInfo && (
-                  <View style={styles.content}>
-                    <View>
-                      <Text style={styles.right}>
-                        <IconSnappy name="package-outline" size={Colors.size_icon} color={Colors.color_icon} />
-                      </Text>
-                    </View>
-                    <View style={styles.left}>
-                      <Text style={styles.text}>{packageInfo}</Text>
-                    </View>
-                  </View>
-                )}
+                  {packageInfo && (
+                    <TouchableOpacity onLongPress={() => copyToClipboard(packageInfo)} style={styles.content}>
+                      <View>
+                        <Text style={styles.right}>
+                          <IconSnappy name="package-outline" size={Colors.size_icon} color={Colors.color_icon} />
+                        </Text>
+                      </View>
+                      <View style={styles.left}>
+                        <Text style={styles.text}>{packageInfo}</Text>
+                      </View>
+                    </TouchableOpacity>
+                  )}
 
-                {note && (
-                  <View style={styles.content}>
-                    <View>
-                      <Text style={styles.right}>
-                        <AntDesign name="infocirlceo" size={Colors.size_icon} color={Colors.dust_red_7} />
-                      </Text>
-                    </View>
-                    <View style={styles.left}>
-                      {(typeof note === 'object' &&
-                        note.map((item: any, idx: number) => {
-                          if (item)
-                            return (
-                              <Text style={styles.text} key={idx}>
-                                {item}
-                              </Text>
-                            );
-                          return null;
-                        })) || <Text style={styles.text}>{note}</Text>}
-                    </View>
-                  </View>
-                )}
+                  {note && (
+                    <TouchableOpacity onLongPress={() => copyToClipboard(typeof note === 'object' ? note?.join(', ') : note)} style={styles.content}>
+                      <View>
+                        <Text style={styles.right}>
+                          <AntDesign name="infocirlceo" size={Colors.size_icon} color={Colors.dust_red_7} />
+                        </Text>
+                      </View>
+                      <View style={styles.left}>
+                        {(typeof note === 'object' &&
+                          note.map((item: any, idx: number) => {
+                            if (item)
+                              return (
+                                <Text style={styles.text} key={idx}>
+                                  {item}
+                                </Text>
+                              );
+                            return null;
+                          })) || <Text style={styles.text}>{note}</Text>}
+                      </View>
+                    </TouchableOpacity>
+                  )}
+                </View>
+                {!notArrowDetail && <AntDesign name="right" size={Colors.size_icon} />}
               </View>
-              {!notArrowDetail && <AntDesign name="right" size={Colors.size_icon} />}
             </View>
-          </View>
-        </SwipeAble>
-      )}
-      {visibleContent && <Divider style={[{ marginTop: 0, marginHorizontal: 16 }]} />}
-
-      {/* Footer */}
-      <View style={styles.p_hr_16}>
-        {cost && (
-          <View style={[CommonStyle.d_flex_between, { marginBottom: 8 }]}>
-            <Text style={{ fontFamily: 'Roboto_500Medium' }}>Số tiền cần thu</Text>
-            <View style={CommonStyle.d_flex_between}>
-              <DollarCircleIcon width={20} height={20} theme={1} />
-              <Text style={{ marginLeft: 4, fontFamily: 'Roboto_500Medium' }}>{cost}</Text>
-            </View>
-          </View>
+          </SwipeAble>
         )}
-        <ButtonAction options={buttonOptions} />
-      </View>
+        {visibleContent && <Divider style={[{ marginTop: 0, marginHorizontal: 16 }]} />}
 
-      {/* Position */}
-      {/* Pinned */}
-      {onPin && (
-        <TouchableOpacity onPress={onPin} style={[styles.pinnedContainer, { backgroundColor: isPinned ? Colors.sunset_orange_7 : Colors.gray_2 }]}>
-          <Feather name="paperclip" size={12} color={'white'} />
-        </TouchableOpacity>
-      )}
+        {/* Footer */}
+        <View style={styles.p_hr_16}>
+          {cost && (
+            <View style={[CommonStyle.d_flex_between, { marginBottom: 8 }]}>
+              <Text style={{ fontFamily: 'Roboto_500Medium' }}>Số tiền cần thu</Text>
+              <View style={CommonStyle.d_flex_between}>
+                <DollarCircleIcon width={20} height={20} theme={1} />
+                <Text style={{ marginLeft: 4, fontFamily: 'Roboto_500Medium' }}>{cost}</Text>
+              </View>
+            </View>
+          )}
+          <ButtonAction options={buttonOptions} />
+        </View>
+
+        {/* Position */}
+        {/* Pinned */}
+        {onPin && (
+          <TouchableOpacity onPress={onPin} style={[styles.pinnedContainer, { backgroundColor: isPinned ? Colors.sunset_orange_7 : Colors.gray_2 }]}>
+            <Feather name="paperclip" size={12} color={'white'} />
+          </TouchableOpacity>
+        )}
+      </View>
     </TouchableOpacity>
   );
 }
@@ -270,6 +280,7 @@ const styles: any = StyleSheet.create({
     backgroundColor: '#fff',
     flex: 1,
     paddingVertical: 12,
+    marginBottom: 4,
   },
   index: {
     backgroundColor: Colors.gray_4,

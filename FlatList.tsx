@@ -1,12 +1,15 @@
-import React from 'react';
-import { FlatList as FlatListNative, View, Dimensions, StyleSheet } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, StyleSheet, FlatList as FlatListNative, Dimensions } from 'react-native';
 import PropTypes, { InferProps } from 'prop-types';
+import Lottie from 'lottie-react-native';
 
 import Empty from './Empty';
 import { LoadMore } from '@components/Lottie';
-import { FlashList } from '@shopify/flash-list';
+import Colors from './Colors';
+import { changeColorKeyPath } from '@utils';
+import { getThemeColor } from '@hocs/withTheme';
 
-const screen = Dimensions.get('screen');
+const deviceWidth = Dimensions.get('window').width;
 
 const propTypes: any = {
   loadingModal: PropTypes.bool,
@@ -20,6 +23,7 @@ const propTypes: any = {
   onScroll: PropTypes.func,
   onLoadMore: PropTypes.func,
   hasMore: PropTypes.bool,
+  isNative: PropTypes.bool,
 };
 
 const defaultProps: any = {
@@ -52,38 +56,52 @@ const FlatList = React.forwardRef((props: IProps, ref: any) => {
     ItemSeparatorComponent,
     showsVerticalScrollIndicator,
     ListHeaderComponent,
-    estimatedItemSize,
   } = props;
+  const [themeColor, setThemeColor] = useState<string>('#2A2565');
+
+  useEffect(() => {
+    async function getColor() {
+      const color = await getThemeColor();
+      if (color) setThemeColor(color);
+    }
+
+    getColor();
+  }, []);
 
   return (
     <>
       {((loadingModal || (data?.length === 0 && loading)) && (
         <View style={styles.loading}>
-          <LoadMore />
+          <Lottie
+            colorFilters={changeColorKeyPath(require('../../assets/animations/waiting.json'), themeColor)}
+            source={require('../../assets/animations/waiting.json')}
+            style={{ width: deviceWidth / 3 }}
+            autoPlay
+            loop
+          />
         </View>
-      )) || (
-        <FlashList
-          ref={ref}
-          {...props}
-          ListHeaderComponent={ListHeaderComponent}
-          showsVerticalScrollIndicator={showsVerticalScrollIndicator || false}
-          keyboardShouldPersistTaps={keyboardShouldPersistTaps}
-          renderItem={renderItem}
-          onRefresh={onRefresh}
-          data={data}
-          keyExtractor={keyExtractor}
-          ListFooterComponent={data?.length !== 0 && loading && hasMore && ListFooterComponent}
-          ItemSeparatorComponent={ItemSeparatorComponent}
-          refreshing={refreshing}
-          onEndReached={(!loading && onLoadMore) || (() => {})}
-          onEndReachedThreshold={0.1}
-          scrollEventThrottle={16}
-          onScroll={onScroll}
-          ListEmptyComponent={(!loading && <Empty />) || null}
-          removeClippedSubviews={true}
-          estimatedItemSize={estimatedItemSize || 100}
-        />
-      )}
+      )) ||
+        (data?.length > 0 && (
+          <FlatListNative
+            ref={ref}
+            {...props}
+            ListHeaderComponent={ListHeaderComponent}
+            showsVerticalScrollIndicator={showsVerticalScrollIndicator || false}
+            keyboardShouldPersistTaps={keyboardShouldPersistTaps}
+            renderItem={renderItem}
+            onRefresh={onRefresh}
+            data={data}
+            keyExtractor={keyExtractor}
+            ListFooterComponent={data?.length !== 0 && loading && hasMore && ListFooterComponent}
+            ItemSeparatorComponent={ItemSeparatorComponent}
+            refreshing={refreshing}
+            onEndReached={(!loading && onLoadMore) || (() => {})}
+            onEndReachedThreshold={0.1}
+            scrollEventThrottle={16}
+            onScroll={onScroll}
+            removeClippedSubviews={true}
+          />
+        )) || <Empty />}
     </>
   );
 });
@@ -93,7 +111,7 @@ FlatList.propTypes = propTypes;
 FlatList.defaultProps = defaultProps;
 
 const styles = StyleSheet.create({
-  loading: { alignItems: 'center', justifyContent: 'center', height: screen.height / 1.5, width: screen.width },
+  loading: { alignItems: 'center', justifyContent: 'center', flex: 1, backgroundColor: '#fff' },
 });
 
 export default FlatList;

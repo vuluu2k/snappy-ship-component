@@ -3,6 +3,8 @@ import { View, TouchableOpacity, Text } from 'react-native';
 import dayjs from 'dayjs';
 // @ts-ignore
 import CallDetectorManager from 'react-native-call-detection';
+// @ts-ignore
+import { isEmpty } from 'lodash';
 const customParseFormat = require('dayjs/plugin/customParseFormat');
 dayjs.extend(customParseFormat);
 import { connect } from 'react-redux';
@@ -40,6 +42,7 @@ type IProps = {
   textMainPhone?: string;
   latestViewId?: string;
   subText?: { style?: any; text: string };
+  children?: any;
 };
 
 type IState = {
@@ -192,6 +195,9 @@ class PhoneCall extends React.Component<IProps, IState> {
       shipper_id: decodedData?.uid || '',
     };
 
+    if (isEmpty(body))
+      return Notification.error('Dữ liệu gọi điện đang không có không thể thực hiện lưu log cuộc gọi, vui lòng liên hệ đội phát triển sản phẩm');
+
     const form = new FormData();
     Object.keys(body).forEach(function (key: any) {
       form.append(key, body[key]);
@@ -222,8 +228,6 @@ class PhoneCall extends React.Component<IProps, IState> {
     const { trackingId, accessToken, onCalled, typeCall } = this.props;
     const url = `${API_URL}/v1/snappy/trackings/${trackingId || (typeCall && 'tracking_id') || ''}?access_token=${accessToken || ''}&is_shipper=true`;
 
-    const body = {};
-
     try {
       const response = await fetch(url, { method: 'post', body: form });
       const data = await response?.json();
@@ -235,7 +239,7 @@ class PhoneCall extends React.Component<IProps, IState> {
       result = data;
     } catch (error) {
       console.log(error);
-      sendLogs({ error: error, body: body, url: url }, 'SAVE_CALL_LOG');
+      sendLogs({ error: error, body: form, url: url }, 'SAVE_CALL_LOG');
     } finally {
       return result;
     }

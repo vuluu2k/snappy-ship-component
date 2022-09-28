@@ -20,7 +20,7 @@ const propTypes = {
   options: PropTypes.array,
   defaultKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   showOption: PropTypes.bool,
-  customComponent: PropTypes.oneOfType([PropTypes.node, PropTypes.func]),
+  customComponent: PropTypes.any,
   showKeySelect: PropTypes.bool,
   textTitle: PropTypes.string,
   theme: PropTypes.string,
@@ -102,7 +102,7 @@ export default class DropDownButton extends Component<IProps, IState> {
           useFast>
           <ScrollView>
             <View style={{ width: '100%', alignSelf: 'flex-start', paddingBottom: 24 }}>
-              {(!customComponent &&
+              {customComponent ||
                 options?.map((item: any, idx: number) => {
                   const ComponentIcon: any = item?.icon?.component;
                   return (
@@ -144,8 +144,7 @@ export default class DropDownButton extends Component<IProps, IState> {
                       </View>
                     </TouchableOpacity>
                   );
-                })) ||
-                customComponent}
+                })}
             </View>
           </ScrollView>
         </Modal>

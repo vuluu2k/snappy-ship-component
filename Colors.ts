@@ -11,6 +11,7 @@ export default {
   geek_blue_6: '#2F54EB',
   geek_blue_5: '#597EF7',
   geek_blue_3: '#ADC6FF',
+  geek_blue_2: '#D6E4FF',
   geek_blue_1: '#F0F5FF',
 
   gray_5: '#3A3A3C',

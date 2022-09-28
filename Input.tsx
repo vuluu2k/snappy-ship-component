@@ -8,6 +8,7 @@ import Colors from './Colors';
 import CommonStyle from './CommonStyle';
 import IconSnappy from '@components/IconSnappy';
 import { InputProps } from './types/input';
+import { getThemeColor, withThemeProps } from '@hocs/withTheme';
 
 const propTypes: any = {
   title: PropTypes.node,
@@ -31,7 +32,7 @@ const propTypes: any = {
   hasCallAction: PropTypes.bool,
 };
 
-type IProps = InferProps<typeof propTypes> & InputProps;
+type IProps = InferProps<typeof propTypes> & InputProps & withThemeProps;
 
 const Input = React.forwardRef((props: IProps, ref: any) => {
   const {
@@ -62,6 +63,7 @@ const Input = React.forwardRef((props: IProps, ref: any) => {
     hasCallAction,
   } = props;
   const [isFocus, setFocus] = useState<boolean>(props?.autoFocus || false);
+  const [themeColor, setThemeColor] = useState<string>('#2A2565');
   const [securePassword, setSecurePassword] = useState<any>(props?.secureTextEntry);
   const inputRef = useRef<any>(null);
 
@@ -71,6 +73,15 @@ const Input = React.forwardRef((props: IProps, ref: any) => {
     await Clipboard.setStringAsync(text);
     Notification.success(`Đã sao chép ${text}`);
   };
+
+  useEffect(() => {
+    async function getColor() {
+      const color = await getThemeColor();
+      if (color) setThemeColor(color);
+    }
+
+    getColor();
+  }, []);
 
   useEffect(() => {
     const timeout =
@@ -113,7 +124,7 @@ const Input = React.forwardRef((props: IProps, ref: any) => {
           {
             backgroundColor: '#fff',
             borderWidth: isFocus ? 1.5 : 1,
-            borderColor: isFocus ? '#000' : Colors.gray_1,
+            borderColor: isFocus ? themeColor : Colors.gray_1,
             height: 40,
           },
           style,

@@ -132,6 +132,9 @@ export default class ProgressBar extends Component<IProps, IState> {
       backgroundColor: unfilledColor,
     };
     const progressStyle: any = {
+      borderRadius,
+      borderWidth: 2,
+      borderColor: '#fff',
       backgroundColor: color,
       height,
       transform: [
@@ -162,9 +165,9 @@ export default class ProgressBar extends Component<IProps, IState> {
       <View style={[containerStyle, style]} onLayout={this.handleLayout} {...restProps}>
         <Animated.View style={progressStyle} />
         {/* @ts-ignore */}
-        <View style={{ position: 'absolute', width: width, height: height, alignItems: 'center' }}>
+        {/* <View style={{ position: 'absolute', width: width, height: height, alignItems: 'center' }}>
           <Text style={{ fontFamily: 'Roboto_500Medium' }}>{!!Math.round((progress || 0) * 100) ? Math.round((progress || 0) * 100) : 0}%</Text>
-        </View>
+        </View> */}
 
         {children}
       </View>

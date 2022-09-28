@@ -73,7 +73,7 @@ export default class ListSelect extends Component<IProps, IState> {
 
           <View style={{ paddingRight: 16, flexDirection: 'row', alignItems: 'center' }}>
             {!!textArrow && <Text style={{ color: Colors.gray_4 }}>{textArrow || ''}</Text>}
-            {item?.arrowIcon || <AntDesign name="right" size={16} color={Colors.gray_2} />}
+            {item?.arrowIcon || (!item?.notShowArrow && <AntDesign name="right" size={16} color={Colors.gray_2} />)}
           </View>
         </View>
       </TouchableOpacity>

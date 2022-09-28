@@ -52,16 +52,18 @@ const trackingStatus = [
   { name: 'success', text: 'Thành công' },
   { name: 'failed', text: 'Thất bại' },
   { name: 'new', text: 'Đang thực hiện' },
+  { name: 'paid', text: 'Đã chốt' },
+  { name: 'pending', text: 'Đang thực hiện' },
 ];
 
 const statusArrayShip: Array<any> = [
   {
-    array: ['processing_picked_up', 'out_for_delivery', 'returning', 'new'],
+    array: ['processing_picked_up', 'out_for_delivery', 'returning', 'new', 'pending'],
     color: '#1D39C4',
     icon: <IconSnappy name="refresh" color="#1D39C4" size={14} />,
   },
   {
-    array: ['picked_up', 'delivered', 'returned', 'success'],
+    array: ['picked_up', 'delivered', 'returned', 'success', 'paid'],
     color: '#237804',
     icon: <IconSnappy name="success-circle" color="#237804" size={14} />,
   },

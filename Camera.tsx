@@ -1,17 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Button,
-  TouchableOpacity,
-  StatusBar,
-  Dimensions,
-  Image,
-  ActivityIndicator,
-  ScrollView,
-  SafeAreaView,
-} from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, StatusBar, Dimensions, Image, ActivityIndicator, ScrollView, SafeAreaView } from 'react-native';
 import { Camera, CameraType, FlashMode } from 'expo-camera';
 import PropTypes, { InferProps } from 'prop-types';
 import { Entypo, Feather, Fontisto, Ionicons } from '@expo/vector-icons';
@@ -19,9 +7,10 @@ import Constants from 'expo-constants';
 import Modal from 'react-native-modal';
 
 import IconSnappy from '@components/IconSnappy';
-import { takePhotoFromLibrary, uploadImage } from '@utils/services';
+import { getBase64FromFileUrl, takePhotoFromLibrary, uploadDataToPanChat, uploadImage } from '@utils/services';
 import { Notification } from '@components/SnyNotification';
 import Colors from './Colors';
+import Button from './Button';
 
 const deviceWidth = Dimensions.get('window').width;
 const deviceHeight = Dimensions.get('window').height;
@@ -34,15 +23,17 @@ const propTypes = {
   onTakePhoto: PropTypes.func,
   multiple: PropTypes.bool,
   disabledLibrary: PropTypes.bool,
+  InScreen: PropTypes.bool,
 };
 const defaultProps = {
   type: 'back',
+  InScreen: false,
 };
 
 type IProps = InferProps<typeof propTypes>;
 
 function SnyCamera(props: IProps) {
-  const { type: typeProp, onClose, onTakePhoto, multiple, disabledLibrary } = props;
+  const { type: typeProp, onClose, onTakePhoto, multiple, disabledLibrary, InScreen } = props;
   const [type, setType] = useState<CameraType>(typeProp === 'back' ? CameraType.back : CameraType.front);
   const [flashMode, setFlashMode] = useState<FlashMode>(FlashMode.off);
   const [permission, requestPermission] = Camera.useCameraPermissions();
@@ -54,17 +45,30 @@ function SnyCamera(props: IProps) {
   const [photoWasTake, setPhotoWasTake] = useState<any>([]);
   const cameraRef = useRef<any>(null);
 
+  useEffect(() => {
+    if(!permission?.granted){
+      requestPermission()
+    }
+  },[])
+
   if (!permission) {
     // Camera permissions are still loading
-    return <View />;
+    return (
+      <View style={styles.container}>
+        <Text style={{ textAlign: 'center', fontFamily: 'Roboto_500Medium' }}>Đang tải Camera, Xin chờ...</Text>
+      </View>
+    );
   }
 
   if (!permission.granted) {
     // Camera permissions are not granted yet
     return (
       <View style={styles.container}>
-        <Text style={{ textAlign: 'center' }}>We need your permission to show the camera</Text>
-        <Button onPress={requestPermission} title="grant permission" />
+        <Feather name="camera-off" size={30} color="black" />
+        <Text style={{ textAlign: 'center', fontFamily: 'Roboto_500Medium', paddingVertical: 12 }}>Ứng dụng cần cấp quyền sử dụng Camera</Text>
+        <Button type="primary" onPress={requestPermission}>
+          Cấp quyền ngay
+        </Button>
       </View>
     );
   }
@@ -148,28 +152,40 @@ function SnyCamera(props: IProps) {
     setUploadResult(null);
   };
 
-  const handleUploadImage = (photo: any, isLibrary?: boolean) => {
+  const handleUploadImage = async (photo: any, isLibrary?: boolean) => {
     setIsUploadImage(true);
     setUploadResult(null);
     const errorObj = { success: false, message: 'Đã có lỗi tải ảnh lên!' };
 
-    uploadImage(
-      photo,
-      (resData: any) => {
-        setIsUploadImage(false);
-        if (resData.success) {
-          setPhotoWasTake(photoWasTake?.concat([resData.data]));
-          if (isLibrary && !multiple) {
-            onTakePhoto && onTakePhoto(resData.data);
-            onClose;
-          }
-        } else setUploadResult(errorObj);
-      },
-      () => {
-        setIsUploadImage(false);
-        setUploadResult(errorObj);
+    const uriBase64 = await getBase64FromFileUrl(photo.uri);
+    const resData = await uploadDataToPanChat(uriBase64, 'image/jpeg', 'jpeg');
+
+    if (resData.success) {
+      setIsUploadImage(false);
+      setPhotoWasTake(photoWasTake?.concat([resData.content_url]));
+      if (isLibrary && !multiple) {
+        onTakePhoto && onTakePhoto(resData.content_url);
+        onClose;
       }
-    );
+    } else {
+      uploadImage(
+        photo,
+        (resData: any) => {
+          setIsUploadImage(false);
+          if (resData.success) {
+            setPhotoWasTake(photoWasTake?.concat([resData.data]));
+            if (isLibrary && !multiple) {
+              onTakePhoto && onTakePhoto(resData.data);
+              onClose;
+            }
+          } else setUploadResult(errorObj);
+        },
+        () => {
+          setIsUploadImage(false);
+          setUploadResult(errorObj);
+        }
+      );
+    }
   };
 
   const handleSubmit = () => {
@@ -179,22 +195,28 @@ function SnyCamera(props: IProps) {
   };
 
   return (
-    <View style={styles.container}>
-      <StatusBar translucent={!isViewImage} backgroundColor="transparent" barStyle={!isViewImage ? 'light-content' : 'dark-content'} />
+    <View style={styles.container_camera}>
+      <StatusBar
+        translucent={!isViewImage && !InScreen}
+        backgroundColor="transparent"
+        barStyle={!isViewImage && !InScreen ? 'light-content' : 'dark-content'}
+      />
 
       {(!isViewImage && (
         <Camera ref={cameraRef} style={styles.camera} type={type} flashMode={flashMode}>
           {/* View Information */}
           {/* Actions */}
           {/* Close */}
-          <TouchableOpacity onPress={onClose || undefined} style={styles.close}>
+          <TouchableOpacity onPress={onClose || undefined} style={[styles.close, InScreen && { top: 20 }]}>
             <View style={styles.close_icon}>
               <Ionicons name="ios-close" size={20} color="#fff" />
             </View>
           </TouchableOpacity>
 
           {/* FlashMode */}
-          <TouchableOpacity onPress={() => toggleFlashMode(flashMode === 'off' ? 'torch' : 'off')} style={styles.flashMode}>
+          <TouchableOpacity
+            onPress={() => toggleFlashMode(flashMode === 'off' ? 'torch' : 'off')}
+            style={[styles.flashMode, InScreen && { top: 20 }]}>
             <Ionicons name={flashMode === 'off' ? 'flash-off' : 'flash'} size={20} color="#fff" />
           </TouchableOpacity>
 
@@ -338,8 +360,8 @@ function SnyCamera(props: IProps) {
             <Text style={[styles.text_take, { marginLeft: 8 }]}>Đang xử lý ảnh</Text>
           </View>
         )) || (
-          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 100 }}>
-            <Text>Lỗi: {uploadResult?.message}</Text>
+          <View style={{ alignItems: 'center', justifyContent: 'center', marginBottom: 100 }}>
+            <Text style={[styles.text_take]}>Lỗi: {uploadResult?.message}</Text>
             <TouchableOpacity
               onPress={onResumeCamera}
               style={{ backgroundColor: 'rgba(0,0,0,.6)', paddingVertical: 8, paddingHorizontal: 16, borderRadius: 6 }}>
@@ -389,6 +411,7 @@ const ImageAction = (props: any) => {
 
 const styles = StyleSheet.create({
   close: { position: 'absolute', top: Constants.statusBarHeight + 20, left: 20, width: 40, height: 40, zIndex: 10 },
+  flashMode: { position: 'absolute', top: Constants.statusBarHeight + 20, right: 10, width: 40, height: 40, zIndex: 10 },
   close_icon: {
     backgroundColor: 'rgba(0,0,0,.6)',
     width: 22,
@@ -397,9 +420,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderRadius: 13,
   },
-  flashMode: { position: 'absolute', top: Constants.statusBarHeight + 20, right: 10, width: 40, height: 40, zIndex: 10 },
 
   container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  container_camera:{
     flex: 1,
     justifyContent: 'center',
   },

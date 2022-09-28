@@ -106,7 +106,7 @@ const ModalChildren = ({
                 </Button>
               ) || null}
               {(onOk && (
-                <Button style={styles.button_modal} disabled={disabledOk} size="lg" type="primary" loading={loadingOk} onPress={onOk}>
+                <Button style={[styles.button_modal]} disabled={disabledOk} size="lg" type="primary" loading={loadingOk} onPress={onOk}>
                   {onOkText || 'Xác nhận'}
                 </Button>
               )) ||

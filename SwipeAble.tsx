@@ -11,7 +11,7 @@ const propTypes = {
   rightTitle: PropTypes.string,
   leftTitle: PropTypes.string,
   disabled: PropTypes.bool,
-  children:PropTypes.node
+  children: PropTypes.node,
 };
 
 const defaultProps = {

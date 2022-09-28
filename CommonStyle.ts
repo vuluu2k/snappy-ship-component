@@ -70,10 +70,10 @@ export default StyleSheet.create({
 
   //--------------- font-weight --------------
   fw_500: {
-    fontWeight: '500',
+    fontFamily: 'Roboto_500Medium',
   },
   fw_700: {
-    fontWeight: '700',
+    fontFamily: 'Roboto_700Bold',
   },
 
   //-------------- margin ------------
